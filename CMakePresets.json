@@ -1,0 +1,74 @@
+{
+    "version": 3,
+    "configurePresets": [
+
+        {
+            "name": "windows-mingw-r",
+            "displayName": "Windows MinGW Release",
+            "description": "Builds with MinGW GCC and vcpkg triplet x64-mingw-dynamic, Release configuration",
+            "generator": "MinGW Makefiles",
+            "binaryDir": "${sourceDir}/build/windows-mingw-release",
+
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                "VCPKG_TARGET_TRIPLET": "x64-mingw-dynamic"
+            }
+        },
+
+        {
+            "name": "windows-mingw-d",
+            "displayName": "Windows MinGW Debug",
+            "description": "Builds with MinGW GCC and vcpkg triplet x64-mingw-dynamic, Debug configuration",
+            "generator": "MinGW Makefiles",
+            "binaryDir": "${sourceDir}/build/windows-mingw-debug",
+
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                "VCPKG_TARGET_TRIPLET": "x64-mingw-dynamic"
+            }
+        },
+
+        {
+            "name": "windows-vs2022",
+            "displayName": "Windows Visual Studio",
+            "description": "Build with MSVC and vcpkg triplet x64-windows, Release configuration",
+            "generator": "Visual Studio 17 2022",
+            "architecture": "x64",
+            "binaryDir": "${sourceDir}/build/windows-visual-studio",
+            
+            "cacheVariables": {
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                "VCPKG_TARGET_TRIPLET": "x64-windows"
+            }
+        },
+
+        
+        {
+            "name": "linux-gcc-r",
+            "displayName": "Linux GCC Release",
+            "description": "Builds with GCC, Release configuration",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/linux-gcc-release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                "VCPKG_TARGET_TRIPLET": "x64-linux"
+            }
+        },
+
+        {
+            "name": "linux-gcc-d",
+            "displayName": "Linux GCC Debug",
+            "description": "Builds with GCC, Debug configuration",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/linux-gcc-release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                "VCPKG_TARGET_TRIPLET": "x64-linux"
+            }
+        }
+    ]
+}
