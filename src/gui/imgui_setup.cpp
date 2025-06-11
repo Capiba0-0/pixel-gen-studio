@@ -8,11 +8,11 @@
 void PGS::gui::setFonts()
 {
     ImGuiIO& io = ImGui::GetIO();
-    ImFont* mainFont = io.Fonts->AddFontFromFileTTF("assets/Inter-VariableFont.ttf", 15.0f);
+    ImFont* mainFont = io.Fonts->AddFontFromFileTTF("assets/fonts/Inter-VariableFont.ttf", 15.0f);
     io.FontDefault = mainFont;
 
     if (!mainFont)
-        throw std::runtime_error("Failed to load font: assets/Inter-VariableFont.ttf");
+        throw std::runtime_error("Failed to load font: assets/fonts/Inter-VariableFont.ttf");
 
     if (!ImGui::SFML::UpdateFontTexture())
         throw std::runtime_error("Failed to update font texture for ImGui-SFML");
@@ -79,7 +79,6 @@ void PGS::gui::applyImguiStyle()
     style.AntiAliasedLines = true;
     style.AntiAliasedLinesUseTex = true;
     style.AntiAliasedFill = true;
-
 
     // --- Colors ---
     // Text
@@ -168,7 +167,7 @@ void PGS::gui::applyImguiStyle()
     style.Colors[ImGuiCol_TextSelectedBg] = ImVec4(0.69f, 0.69f, 0.69f, 1.00f);
 
     // Drag/Drop Target
-    style.Colors[ImGuiCol_DragDropTarget] = ImVec4(0.24f * 255, 0.64f * 255, 1.00f * 255, 1.00f * 255);
+    style.Colors[ImGuiCol_DragDropTarget] = ImVec4(0.24f, 0.64f, 1.00f, 1.00f);
 
     // Nav Highlight
     style.Colors[ImGuiCol_NavCursor] = ImVec4(0.65f, 0.65f, 0.65f, 0.80f);

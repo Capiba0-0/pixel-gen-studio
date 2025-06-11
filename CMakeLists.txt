@@ -24,9 +24,12 @@ set(IMGUI_SFML_SOURCES
 )
 
 add_executable(${PROJECT_NAME} 
-    src/main.cpp 
+    src/core/main.cpp 
     src/core/application.cpp 
-    src/gui/imgui_setup.cpp
+    src/core/canvas.cpp 
+    src/gui/imgui_setup.cpp 
+    src/gui/windows/about_window.cpp
+    src/gui/windows/new_canvas_window.cpp
     ${IMGUI_SOURCES} 
     ${IMGUI_SFML_SOURCES} 
 )
