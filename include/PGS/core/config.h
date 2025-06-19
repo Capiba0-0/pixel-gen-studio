@@ -21,7 +21,7 @@ struct CanvasConfig
 
 	const sf::Color color = sf::Color::White;
 
-	sf::Vector2u getDefaultSize() const
+	[[nodiscard]] sf::Vector2u getDefaultSize() const
 	{
 		if (defaultSizeIndex >= 0 && defaultSizeIndex < sizeOptions.size())
 			return sizeOptions[defaultSizeIndex];

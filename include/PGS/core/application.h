@@ -4,8 +4,6 @@
 #include "PGS/core/canvas.h"
 #include "PGS/core/config.h"
 #include "PGS/gui/ui_context.h"
-#include "PGS/gui/windows/about_window.h"
-#include "PGS/gui/windows/new_canvas_window.h"
 
 // -- Libraries Headers --
 #include <SFML/Graphics/Color.hpp>
@@ -14,8 +12,10 @@
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Vector2.hpp>
 
-// -- STD Headers --
+// -- STL Headers --
 #include <memory>
+
+#include "PGS/gui/ui_manager.h"
 
 namespace PGS
 {
@@ -26,28 +26,25 @@ private:
 	sf::Clock m_deltaClock;
 	bool m_imguiIsInitialized;
 
-	inline static const sf::Vector2u MIN_WINDOW_SIZE = { 400, 300 };
-	static constexpr float MENU_BAR_PADDING_Y = 12.0f;
+	static constexpr sf::Vector2u MIN_WINDOW_SIZE = { 400, 300 };
 
-	PGS::config::CanvasConfig m_canvasConfig;
-	std::unique_ptr<PGS::Canvas> m_canvas;
+	config::CanvasConfig m_canvasConfig;
+	std::unique_ptr<Canvas> m_canvas;
 
 	sf::Texture m_icon;
-	PGS::gui::UIContext m_uiContext;
 
-	// Windows
-	PGS::gui::NewCanvasWindow m_newCanvasWindow;
-	PGS::gui::AboutWindow m_aboutWindow;
+	gui::UIManager m_uiManager;
 
 	// --- Private Methods ---
-	void menuBar();
-
 	void createNewCanvas(sf::Vector2u size, sf::Color color = sf::Color::White);
 	void createNewCanvas(unsigned int x, unsigned int y, sf::Color color = sf::Color::White);
+
+	void processContextEvents(gui::UIContext& uiContext);
+	void processEvents(gui::UIContext& context);
 public:
 	// --- Constructors - Destructor ---
 	Application();
-	Application(sf::Vector2u windowSize);
+	explicit Application(sf::Vector2u windowSize);
 	~Application();
 
 	// Non-Copyable

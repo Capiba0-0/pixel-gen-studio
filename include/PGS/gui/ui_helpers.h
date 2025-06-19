@@ -1,45 +1,47 @@
 #pragma once
 
+#include "PGS/gui/widget.h"
+
 #include "imgui.h"
 #include <SFML/System/Vector2.hpp>
 
 namespace PGS::gui
 {
-struct pusherStyleVar
+struct PusherStyleVar
 {
 	// --- Constructors ---
-	pusherStyleVar(ImGuiStyleVar idx, const ImVec2& val)
+	PusherStyleVar(ImGuiStyleVar idx, const ImVec2& val)
 	{
 		ImGui::PushStyleVar(idx, val);
 	}
-	pusherStyleVar(ImGuiStyleVar idx, const sf::Vector2f& val)
-		: pusherStyleVar(idx, ImVec2{ val.x, val.y })
+	PusherStyleVar(ImGuiStyleVar idx, const sf::Vector2f& val)
+		: PusherStyleVar(idx, ImVec2{ val.x, val.y })
 	{ }
 
-	pusherStyleVar(ImGuiStyleVar idx, float& val)
+	PusherStyleVar(ImGuiStyleVar idx, float& val)
 	{
 		ImGui::PushStyleVar(idx, val);
 	}
 
 	// --- Destructor ---
-	~pusherStyleVar()
+	~PusherStyleVar()
 	{
 		ImGui::PopStyleVar();
 	}
 
 	// No-copyable
-	pusherStyleVar(const pusherStyleVar&) = delete;
-	pusherStyleVar& operator=(const pusherStyleVar&) = delete;
+	PusherStyleVar(const PusherStyleVar&) = delete;
+	PusherStyleVar& operator=(const PusherStyleVar&) = delete;
 };
 
-struct pusherStyleColor
+struct PusherStyleColor
 {
 	// --- Constructors ---
-	pusherStyleColor(ImGuiCol idx, const ImVec4& val)
+	PusherStyleColor(ImGuiCol idx, const ImVec4& val)
 	{
 		ImGui::PushStyleColor(idx, val);
 	}
-	pusherStyleColor(ImGuiCol idx, const sf::Color& val)
+	PusherStyleColor(ImGuiCol idx, const sf::Color& val)
 	{
 		ImVec4 color = ImVec4(
 			static_cast<float>(val.r) / 255.0f,
@@ -50,20 +52,20 @@ struct pusherStyleColor
 		ImGui::PushStyleColor(idx, color);
 	}
 
-	pusherStyleColor(ImGuiCol idx, float& val)
+	PusherStyleColor(ImGuiCol idx, float& val)
 	{
 		ImGui::PushStyleColor(idx, val);
 	}
 
 	// --- Destructor ---
-	~pusherStyleColor()
+	~PusherStyleColor()
 	{
 		ImGui::PopStyleColor();
 	}
 
 	// No-copyable
-	pusherStyleColor(const pusherStyleColor&) = delete;
-	pusherStyleColor& operator=(const pusherStyleColor&) = delete;
+	PusherStyleColor(const PusherStyleColor&) = delete;
+	PusherStyleColor& operator=(const PusherStyleColor&) = delete;
 };
 
 } // namespace PGS::gui

@@ -20,18 +20,20 @@ set(IMGUI_SOURCES
 )
 
 set(IMGUI_SFML_SOURCES
-    third_party/imgui-sfml/imgui-SFML.cpp 
+    third_party/imgui-sfml/imgui-SFML.cpp
 )
 
 add_executable(${PROJECT_NAME} 
     src/core/main.cpp 
     src/core/application.cpp 
     src/core/canvas.cpp 
-    src/gui/imgui_setup.cpp 
-    src/gui/windows/about_window.cpp
-    src/gui/windows/new_canvas_window.cpp
+    src/gui/imgui_setup.cpp
+    src/gui/widgets/about_window.cpp
+    src/gui/widgets/new_canvas_window.cpp
+    src/gui/widgets/menu_bar.cpp
+    src/gui/ui_manager.cpp
     ${IMGUI_SOURCES} 
-    ${IMGUI_SFML_SOURCES} 
+    ${IMGUI_SFML_SOURCES}
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE SFML::Graphics SFML::Window SFML::System)
