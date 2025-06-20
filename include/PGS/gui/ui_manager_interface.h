@@ -1,5 +1,7 @@
 #pragma once
 
+#include "PGS/gui/types.h"
+
 #include <typeindex>
 
 namespace PGS::gui

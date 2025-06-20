@@ -1,7 +1,5 @@
 #pragma once
 
-#include "PGS/gui/widget.h"
-
 #include "imgui.h"
 #include <SFML/System/Vector2.hpp>
 
@@ -10,15 +8,15 @@ namespace PGS::gui
 struct PusherStyleVar
 {
 	// --- Constructors ---
-	PusherStyleVar(ImGuiStyleVar idx, const ImVec2& val)
+	PusherStyleVar(const ImGuiStyleVar idx, const ImVec2& val)
 	{
 		ImGui::PushStyleVar(idx, val);
 	}
-	PusherStyleVar(ImGuiStyleVar idx, const sf::Vector2f& val)
+	PusherStyleVar(const ImGuiStyleVar idx, const sf::Vector2f& val)
 		: PusherStyleVar(idx, ImVec2{ val.x, val.y })
 	{ }
 
-	PusherStyleVar(ImGuiStyleVar idx, float& val)
+	PusherStyleVar(const ImGuiStyleVar idx, const float val)
 	{
 		ImGui::PushStyleVar(idx, val);
 	}
@@ -37,13 +35,13 @@ struct PusherStyleVar
 struct PusherStyleColor
 {
 	// --- Constructors ---
-	PusherStyleColor(ImGuiCol idx, const ImVec4& val)
+	PusherStyleColor(const ImGuiCol idx, const ImVec4& val)
 	{
 		ImGui::PushStyleColor(idx, val);
 	}
-	PusherStyleColor(ImGuiCol idx, const sf::Color& val)
+	PusherStyleColor(const ImGuiCol idx, const sf::Color& val)
 	{
-		ImVec4 color = ImVec4(
+		const auto color = ImVec4(
 			static_cast<float>(val.r) / 255.0f,
 			static_cast<float>(val.g) / 255.0f,
 			static_cast<float>(val.b) / 255.0f,
@@ -52,9 +50,9 @@ struct PusherStyleColor
 		ImGui::PushStyleColor(idx, color);
 	}
 
-	PusherStyleColor(ImGuiCol idx, float& val)
+	PusherStyleColor(const ImGuiCol idx, const float& val)
 	{
-		ImGui::PushStyleColor(idx, val);
+		ImGui::PushStyleColor(idx, static_cast<ImU32>(val));
 	}
 
 	// --- Destructor ---

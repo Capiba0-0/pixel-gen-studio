@@ -3,17 +3,20 @@
 #include "PGS/gui/ui_events.h"
 #include "PGS/gui/ui_manager_interface.h"
 
-#include <optional>
+#include <SFML/System/Time.hpp>
+
+#include <functional>
 
 namespace PGS::gui
 {
+using EventEmitter = std::function<void(const events::UIEvent&)>;
 
 struct UIContext
 {
 	// Events
-	std::optional<events::NewCanvasRequest> newCanvasRequest = std::nullopt;
+	EventEmitter emit;
 
-	std::optional<events::WidgetMouseClick> mouseButtonClicked = std::nullopt;
+	sf::Time deltaTime;
 
 	// Managers
 	UIManagerInterface& uiManager;

@@ -12,17 +12,27 @@ PGS::gui::MenuBar::MenuBar(const sf::Texture& icon)
     , m_icon{icon}
 { }
 
+void PGS::gui::MenuBar::processInput(UIContext& context)
+{
+    // Nothing for now -_-
+}
+
 void PGS::gui::MenuBar::renderContent(UIContext& context)
 {
+    if (!isVisible())
+        return;
+
     // Style config
     m_menuBarFramePadding = { ImGui::GetStyle().FramePadding.x, MENU_BAR_PADDING_Y };
-    PGS::gui::PusherStyleVar   framePadding(ImGuiStyleVar_FramePadding, m_menuBarFramePadding);
-    PGS::gui::PusherStyleColor button(ImGuiCol_Button, sf::Color{ 38, 38, 38, 255 });
-    PGS::gui::PusherStyleColor buttonActive(ImGuiCol_ButtonActive, sf::Color{ 76, 76, 76, 255 });
-    PGS::gui::PusherStyleColor buttonHovered(ImGuiCol_ButtonHovered, sf::Color{ 76, 76, 76, 255 });
+    PusherStyleVar   framePadding(ImGuiStyleVar_FramePadding, m_menuBarFramePadding);
+    PusherStyleColor button(ImGuiCol_Button, sf::Color{ 38, 38, 38, 255 });
+    PusherStyleColor buttonActive(ImGuiCol_ButtonActive, sf::Color{ 76, 76, 76, 255 });
+    PusherStyleColor buttonHovered(ImGuiCol_ButtonHovered, sf::Color{ 76, 76, 76, 255 });
 
     // Menu bar
     if (ImGui::BeginMainMenuBar()) {
+
+        processInput(context);
 
         if (ImGui::ImageButton("About PixelGen Studio", m_icon, sf::Vector2f{ 18, 18 })) {
             context.uiManager.createWidget(typeid(AboutWindow));

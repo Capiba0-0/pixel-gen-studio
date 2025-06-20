@@ -1,7 +1,6 @@
 #include "PGS/gui/ui_manager.h"
 
 // -- PGS Headers --
-#include "PGS/gui/ui_events.h"
 #include "PGS/gui/widget.h"
 #include "PGS/gui/widgets/about_window.h"
 #include "PGS/gui/widgets/menu_bar.h"
@@ -22,11 +21,14 @@ PGS::gui::UIManager::UIManager(sf::Texture& icon) // TODO: Normal Resource manag
 // --- Methods ---
 void PGS::gui::UIManager::render(UIContext& context)
 {
-    for (auto it : m_renderStack)
-        m_widgets[it]->renderContent(context);
+    for (auto id : m_renderStack)
+    {
+        if (auto it = m_widgets.find(id); it != m_widgets.end())
+            it->second->renderContent(context);
+    }
 }
 
-void PGS::gui::UIManager::onEvent(const sf::Event& event, UIContext& context)
+void PGS::gui::UIManager::onEvent(const sf::Event& event)
 {
     if (m_renderStack.empty())
         return;
@@ -35,45 +37,35 @@ void PGS::gui::UIManager::onEvent(const sf::Event& event, UIContext& context)
     {
         if (const auto it = m_widgets.find(m_modalWidgetID.value()); it != m_widgets.end())
             it->second->onEvent(event);
+        return;
     }
 
-    else if (context.mouseButtonClicked.has_value())
-    {
-        const auto it = m_widgets.find(context.mouseButtonClicked->targetWidgetID);
-
-        if (it == m_widgets.end())
-            return;
-
-        it->second->onEvent(event);
-
-        switch (context.mouseButtonClicked->button)
-        {
-        case PGS::events::MouseButton::Left:
-            requestFocus(context.mouseButtonClicked->targetWidgetID);
-            break;
-            // case PGS::events::MouseButton::Right:
-            // case PGS::events::MouseButton::Middle:
-
-        default:
-            break;
-        }
-    }
-
-    else if (const auto it = m_widgets.find(m_renderStack.back()); it != m_widgets.end())
+    if (const auto it = m_widgets.find(m_renderStack.back()); it != m_widgets.end())
         it->second->onEvent(event);
 }
 
-void PGS::gui::UIManager::update(sf::Time deltaTime)
+void PGS::gui::UIManager::update(const sf::Time deltaTime)
 {
     if (m_renderStack.empty())
         return;
 
-    for (const auto& [id, widget] : m_widgets)
+    for (auto id : m_renderStack)
     {
-        if (widget->isVisible())
-            widget->update(deltaTime);
+        if (auto it = m_widgets.find(id); it != m_widgets.end())
+            if (it->second->isVisible())
+                it->second->update(deltaTime);
     }
 }
+
+PGS::gui::WidgetID PGS::gui::UIManager::widgetToId(Widget* widget)
+{
+    if (const auto it = m_mapWidgetToId.find(widget); it != m_mapWidgetToId.end()) {
+        return it->second;
+    }
+
+    return INVALID_WIDGET_ID;
+}
+
 
 // --- Private Methods ---
 PGS::gui::WidgetID PGS::gui::UIManager::generateNextID()
@@ -89,16 +81,16 @@ PGS::gui::WidgetID PGS::gui::UIManager::createWidget(const std::type_index& type
         return INVALID_WIDGET_ID;
 
     std::unique_ptr<Widget> newWidget = factory->second();
-    WidgetID newId = generateNextID();
-    newWidget->setID(newId);
+    const WidgetID newId = generateNextID();
 
+    m_mapWidgetToId[newWidget.get()] = newId;
     m_widgets[newId] = std::move(newWidget);
     m_renderStack.push_back(newId);
 
     return newId;
 }
 
-void PGS::gui::UIManager::closeWidget(WidgetID id)
+void PGS::gui::UIManager::closeWidget(const WidgetID id)
 {
     if (m_widgets.find(id) == m_widgets.end())
         return;
@@ -106,8 +98,11 @@ void PGS::gui::UIManager::closeWidget(WidgetID id)
     if (m_modalWidgetID == id)
         m_modalWidgetID.reset();
 
-    m_widgets.erase(id);
+    Widget* ptr = m_widgets.at(id).get();
+
     m_renderStack.erase(std::remove(m_renderStack.begin(), m_renderStack.end(), id), m_renderStack.end());
+    m_mapWidgetToId.erase(ptr);
+    m_widgets.erase(id);
 }
 
 void PGS::gui::UIManager::requestFocus(WidgetID id)

@@ -22,21 +22,21 @@
 namespace PGS::gui
 {
 
-class UIManager : public UIManagerInterface
+class UIManager final : public UIManagerInterface
 {
 private:
     using WidgetFactory = std::function<std::unique_ptr<Widget>()>;
     std::unordered_map<std::type_index, WidgetFactory> m_factories;
 
     std::unordered_map<WidgetID, std::unique_ptr<Widget>> m_widgets;
-
     std::vector<WidgetID> m_renderStack;
+    std::unordered_map<Widget*, WidgetID> m_mapWidgetToId;
 
-    inline static WidgetID s_nextWidgetID = 1; // 0 is invalid id
+    inline static WidgetID s_nextWidgetID = 1; // 0 is invalid ID
     std::optional<WidgetID> m_modalWidgetID;
 
     // --- Private Methods ---
-    [[nodiscard]] WidgetID generateNextID();
+    [[nodiscard]] static WidgetID generateNextID();
 public:
     // --- Constructors ---
     // No copyable
@@ -48,23 +48,25 @@ public:
     // --- Methods ---
     void render(UIContext& context);
 
-    void onEvent(const sf::Event& event, UIContext& context);
+    void onEvent(const sf::Event& event);
     void update(sf::Time deltaTime);
+
+    WidgetID widgetToId(Widget* widget);
 
     template<typename T, typename... Args>
     void registerWidgetType(Args&&... args)
     {
         static_assert(std::is_base_of_v<Widget, T>, "Type must be derived from Widget.");
 
-        std::type_index typeIndex = typeid(T);
+        const std::type_index typeIndex = typeid(T);
 
-        auto args_tuple = std::forward_as_tuple(std::forward<Args>(args)...);
+        auto argsTuple = std::forward_as_tuple(std::forward<Args>(args)...);
 
-        m_factories[typeIndex] = [args_tuple]()
+        m_factories[typeIndex] = [argsTuple]()
         {
             return std::apply(
                 [](auto&&... args) { return std::make_unique<T>(std::forward<decltype(args)>(args)...); },
-                args_tuple
+                argsTuple
             );
         };
     }

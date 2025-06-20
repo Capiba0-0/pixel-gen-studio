@@ -4,6 +4,7 @@
 #include "PGS/core/canvas.h"
 #include "PGS/core/config.h"
 #include "PGS/gui/ui_context.h"
+#include "PGS/gui/ui_manager.h"
 
 // -- Libraries Headers --
 #include <SFML/Graphics/Color.hpp>
@@ -14,8 +15,7 @@
 
 // -- STL Headers --
 #include <memory>
-
-#include "PGS/gui/ui_manager.h"
+#include <vector>
 
 namespace PGS
 {
@@ -35,12 +35,14 @@ private:
 
 	gui::UIManager m_uiManager;
 
+	std::vector<events::UIEvent> m_eventQueue;
+
 	// --- Private Methods ---
 	void createNewCanvas(sf::Vector2u size, sf::Color color = sf::Color::White);
 	void createNewCanvas(unsigned int x, unsigned int y, sf::Color color = sf::Color::White);
 
-	void processContextEvents(gui::UIContext& uiContext);
-	void processEvents(gui::UIContext& context);
+	void processAppEvent(const events::UIEvent& uiEvent);
+	void processSystemEvent(gui::UIContext& context);
 public:
 	// --- Constructors - Destructor ---
 	Application();

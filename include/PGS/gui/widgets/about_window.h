@@ -8,10 +8,10 @@
 namespace PGS::gui
 {
 
-class AboutWindow : public Widget
+class AboutWindow final : public Widget
 {
 public:
-	AboutWindow(const sf::Texture& icon);
+	explicit AboutWindow(const sf::Texture& icon);
 
 	void renderContent(UIContext& context) override;
 

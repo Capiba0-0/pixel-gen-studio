@@ -3,6 +3,8 @@
 // -- PGS Headers --
 #include "PGS/gui/imgui_setup.h"
 #include "PGS/gui/widgets/menu_bar.h"
+#include "PGS/gui/ui_events.h"
+#include "PGS/gui/ui_context.h"
 
 // -- Libraries Headers --
 #include "imgui.h"
@@ -12,6 +14,7 @@
 // -- STL Headers --
 #include <algorithm>
 #include <stdexcept>
+#include <type_traits>
 
 // --- Constructors ---
 PGS::Application::Application()
@@ -21,18 +24,15 @@ PGS::Application::Application()
 
 PGS::Application::Application(sf::Vector2u windowSize)
 	: m_window{sf::VideoMode(windowSize), "PixelGen Studio"}
-	, m_deltaClock{}
 	, m_imguiIsInitialized{false}
 
-	, m_canvasConfig{}
 	, m_canvas{ std::make_unique<Canvas>(m_canvasConfig.getDefaultSize()) }
-
-	, m_icon{}
 
 	, m_uiManager(m_icon)
 {
 	if (!m_window.isOpen())
 		throw std::runtime_error("FATAL ERROR: Failed to create SFML window.");
+		// TODO: Make new error-class for Fatal Errors
 
 	m_window.setFramerateLimit(60);
 
@@ -42,20 +42,17 @@ PGS::Application::Application(sf::Vector2u windowSize)
 	m_imguiIsInitialized = true;
 
 	// Initialize PGS icon
-	if (!std::filesystem::exists("assets/icons/Icon.png"))
-		throw std::runtime_error("Icon file does not exist.");
-
 	if (!m_icon.loadFromFile("assets/icons/Icon.png"))
 		throw std::runtime_error("Failed to load icon texture from assets/icons");
 
 	m_icon.setSmooth(true);
 
-	// Menu Bar create
-	m_uiManager.createWidget(typeid(gui::MenuBar));
-
 	// ImGui Setup
 	gui::applyImguiStyle();
 	gui::setFonts();
+
+	// Menu Bar create
+	m_uiManager.createWidget(typeid(gui::MenuBar));
 
 	// Canvas Setup
 	m_canvas->clear(sf::Color::White);
@@ -71,7 +68,7 @@ PGS::Application::~Application()
 
 
 // --- Private methods ---
-void PGS::Application::createNewCanvas(sf::Vector2u size, sf::Color color)
+void PGS::Application::createNewCanvas(const sf::Vector2u size, const sf::Color color)
 {
 	createNewCanvas(size.x, size.y, color);
 }
@@ -79,25 +76,45 @@ void PGS::Application::createNewCanvas(unsigned int x, unsigned int y, const sf:
 {
 	if (x == 0 || y == 0) return;
 
-	m_canvas = std::make_unique<PGS::Canvas>(x, y);
+	m_canvas = std::make_unique<Canvas>(x, y);
 
 	m_canvas->clear(color);
 	m_canvas->updateTexture();
 }
 
-void PGS::Application::processContextEvents(gui::UIContext& uiContext)
+void PGS::Application::processAppEvent(const events::UIEvent& uiEvent)
 {
-	if (uiContext.newCanvasRequest)
-		createNewCanvas(uiContext.newCanvasRequest->size, uiContext.newCanvasRequest->bgColor);
+	std::visit([this](auto&& arg) {
+		using T = std::decay_t<decltype(arg)>;
+
+		if constexpr (std::is_same_v<T, events::NewCanvasRequest>)
+		{
+			createNewCanvas(arg.size, arg.bgColor);
+		}
+
+		else if constexpr (std::is_same_v<T, events::CloseWidget>)
+		{
+			m_uiManager.closeWidget(m_uiManager.widgetToId(arg.targetWidget));
+		}
+		else if constexpr (std::is_same_v<T, events::RequestFocus>)
+		{
+			m_uiManager.requestFocus(m_uiManager.widgetToId(arg.targetWidget));
+		}
+		else if constexpr (std::is_same_v<T, events::RequestModal>)
+		{
+			m_uiManager.requestModal(m_uiManager.widgetToId(arg.targetWidget));
+		}
+
+	}, uiEvent);
 }
 
-void PGS::Application::processEvents(gui::UIContext& context)
+void PGS::Application::processSystemEvent(gui::UIContext& context)
 {
 	while(const auto event = m_window.pollEvent()) {
 		ImGui::SFML::ProcessEvent(m_window, *event);
 
 		// UIManager
-		m_uiManager.onEvent(*event, context);
+		m_uiManager.onEvent(*event);
 
 		if (event->is<sf::Event::Closed>()) {
 			m_window.close();
@@ -124,34 +141,48 @@ void PGS::Application::processEvents(gui::UIContext& context)
 void PGS::Application::run()
 {
 	while(m_window.isOpen()) {
-		const sf::Time delta = m_deltaClock.restart();
-		gui::UIContext uiContext {.uiManager = m_uiManager};
+		// -- UIEvent processing --
+		for (const auto& event : m_eventQueue)
+			processAppEvent(event);
+		m_eventQueue.clear();
 
-		// Event processing
-		// Note: It doesn't work properly. The events of the previous frame should be sent here.
-		//       This is a temporary solution. !!! Events don't work for now. !!!
-		// TODO: Remake event/context system.
-		processEvents(uiContext);
-		processContextEvents(uiContext);
+		// -- New Frame parameters --
+		const sf::Time deltaTime = m_deltaClock.restart();
 
-		ImGui::SFML::Update(m_window, delta);
-		
-		// UIManager
-		m_uiManager.update(delta);
-		m_uiManager.render(uiContext);
-	
-		ImGui::ShowStyleEditor(); // TODO: Delete this string, this is for testing
+		const gui::EventEmitter emitter = [&](const events::UIEvent& uiEvent)
+		{
+			m_eventQueue.push_back(uiEvent);
+		};
 
-		m_window.clear(sf::Color(21, 21, 21, 255));
+		gui::UIContext context
+		{
+			.emit = emitter,
+			.deltaTime = deltaTime,
+			.uiManager = m_uiManager
+		};
 
-		// Canvas
+		// Canvas parameters
 		const ImGuiViewport* viewport = ImGui::GetMainViewport();
 		sf::FloatRect canvasBounds{ sf::Vector2f{ viewport->WorkPos.x,  viewport->WorkPos.y  },
 									sf::Vector2f{ viewport->WorkSize.x, viewport->WorkSize.y } };
-		m_canvas->render(m_window, canvasBounds, 1.5);
 
+		// -- System Event processing --
+		processSystemEvent(context);
+
+		// -- Update --
+		ImGui::SFML::Update(m_window, deltaTime);
+		m_uiManager.update(deltaTime);
+
+		// -- Render --
+		m_window.clear(sf::Color(21, 21, 21, 255));
+
+		ImGui::ShowStyleEditor(); // TODO: Delete this string, this is for testing
+
+		m_uiManager.render(context);
+		m_canvas->render(m_window, canvasBounds, 1.5);
 		ImGui::SFML::Render(m_window);
 
+		// -- Display --
 		m_window.display();
 	}
 }

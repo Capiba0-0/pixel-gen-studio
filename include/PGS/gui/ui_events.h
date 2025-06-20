@@ -1,9 +1,14 @@
 #pragma once
 
-#include "PGS/gui/types.h"
-
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Color.hpp>
+
+#include <variant>
+
+namespace PGS::gui
+{
+	class Widget;
+}
 
 namespace PGS::events
 {
@@ -13,15 +18,28 @@ struct NewCanvasRequest
 	sf::Color bgColor;
 };
 
-enum class MouseButton {
-	Left,
-	Right,
-	Middle
+struct CloseWidget
+{
+	gui::Widget* targetWidget;
 };
 
-struct WidgetMouseClick {
-	gui::WidgetID targetWidgetID;
-	MouseButton button;
+struct RequestFocus
+{
+	gui::Widget* targetWidget;
 };
+
+struct RequestModal
+{
+	gui::Widget* targetWidget;
+};
+
+// UIEvent
+// - Note: it must be in the end of this file.
+using UIEvent = std::variant<
+	NewCanvasRequest,
+	CloseWidget,
+	RequestFocus,
+	RequestModal
+>;
 
 } // namespace PGS::events

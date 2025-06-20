@@ -10,7 +10,7 @@
 namespace PGS::gui
 {
 
-class NewCanvasWindow : public Widget
+class NewCanvasWindow final : public Widget
 {
 public:
 	NewCanvasWindow();
@@ -18,7 +18,7 @@ public:
 	void renderContent(UIContext& context) override;
 
 private:
-	PGS::config::CanvasConfig m_config;
+	config::CanvasConfig m_config;
 	int m_currentSelectionIndex;
 	float m_bgColor[4]; 
 

@@ -2,6 +2,6 @@
 
 int main()
 {
-    PGS::Application PixelGen;
-    PixelGen.run();
+    PGS::Application PixelGenStudio;
+    PixelGenStudio.run();
 }

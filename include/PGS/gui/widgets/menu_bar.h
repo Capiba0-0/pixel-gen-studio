@@ -8,12 +8,14 @@
 
 namespace PGS::gui {
 
-class MenuBar : public Widget
+class MenuBar final : public Widget
 {
 public:
-    MenuBar(const sf::Texture& icon);
+    explicit MenuBar(const sf::Texture& icon);
 
     void renderContent(UIContext& context) override;
+
+    void processInput(UIContext& context) override;
 
 private:
     ImVec2 m_menuBarFramePadding;

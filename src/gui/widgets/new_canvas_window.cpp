@@ -6,9 +6,7 @@
 
 #include "imgui.h"
 
-using namespace PGS::gui;
-
-NewCanvasWindow::NewCanvasWindow()
+PGS::gui::NewCanvasWindow::NewCanvasWindow()
 	: m_currentSelectionIndex{ m_config.defaultSizeIndex }
 	, m_bgColor{ 
 		static_cast<float>(m_config.color.r) / 255.0f,
@@ -24,7 +22,7 @@ NewCanvasWindow::NewCanvasWindow()
 	}
 }
 
-void NewCanvasWindow::renderContent(UIContext& context)
+void PGS::gui::NewCanvasWindow::renderContent(UIContext& context)
 {
 	if (!m_isVisible)
 		return;
@@ -72,13 +70,13 @@ void NewCanvasWindow::renderContent(UIContext& context)
 			static_cast<uint8_t>(m_bgColor[3] * 255.0f)
 		);
 
-		context.newCanvasRequest = eventData;
+		context.emit(eventData);
 
-		makeInvisible();
+		context.emit(events::CloseWidget{this});
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Cancel")) {
-		makeInvisible();
+		context.emit(events::CloseWidget{this});
 	}
 
 	ImGui::End();

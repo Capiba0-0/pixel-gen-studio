@@ -5,13 +5,11 @@
 #include "imgui.h"
 #include "imgui-SFML.h"
 
-using namespace PGS::gui;
-
-AboutWindow::AboutWindow(const sf::Texture& icon)
+PGS::gui::AboutWindow::AboutWindow(const sf::Texture& icon)
 	: m_icon(icon)
 { }
 
-void AboutWindow::renderContent(UIContext& context)
+void PGS::gui::AboutWindow::renderContent(UIContext& context)
 {
 	if (!isVisible())
 		return;
@@ -61,7 +59,7 @@ void AboutWindow::renderContent(UIContext& context)
 	// Close logic
 	if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
 		if (!ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)) {
-			makeInvisible();
+			context.emit(events::CloseWidget{this});
 		}
 	}
 
