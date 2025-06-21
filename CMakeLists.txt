@@ -23,15 +23,17 @@ set(IMGUI_SFML_SOURCES
     third_party/imgui-sfml/imgui-SFML.cpp
 )
 
-add_executable(${PROJECT_NAME} 
+add_executable(${PROJECT_NAME}
+    src/core/application.cpp
     src/core/main.cpp 
-    src/core/application.cpp 
-    src/core/canvas.cpp 
-    src/gui/imgui_setup.cpp
+    src/core/pixel_buffer.cpp
+        src/core/managers/document_manager.cpp
+    src/core/managers/ui_manager.cpp
     src/gui/widgets/about_window.cpp
-    src/gui/widgets/new_canvas_window.cpp
     src/gui/widgets/menu_bar.cpp
-    src/gui/ui_manager.cpp
+    src/gui/widgets/new_canvas_window.cpp
+    src/gui/canvas.cpp
+    src/gui/imgui_setup.cpp
     ${IMGUI_SOURCES} 
     ${IMGUI_SFML_SOURCES}
 )

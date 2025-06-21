@@ -5,6 +5,8 @@
 
 #include <stdexcept>
 
+#include "PGS/gui/canvas.h"
+
 void PGS::gui::setFonts()
 {
     ImGuiIO& io = ImGui::GetIO();

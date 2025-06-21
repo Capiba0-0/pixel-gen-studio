@@ -1,21 +1,20 @@
 #pragma once
 
 // -- PGS Headers --
-#include "PGS/core/canvas.h"
-#include "PGS/core/config.h"
+#include "PGS/gui/canvas.h"
 #include "PGS/gui/ui_context.h"
-#include "PGS/gui/ui_manager.h"
+#include "PGS/core/managers/ui_manager.h"
 
 // -- Libraries Headers --
-#include <SFML/Graphics/Color.hpp>
 #include <SFML/Graphics/RenderWindow.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/System/Clock.hpp>
 #include <SFML/System/Vector2.hpp>
 
 // -- STL Headers --
-#include <memory>
 #include <vector>
+
+#include "managers/document_manager.h"
 
 namespace PGS
 {
@@ -28,21 +27,17 @@ private:
 
 	static constexpr sf::Vector2u MIN_WINDOW_SIZE = { 400, 300 };
 
-	config::CanvasConfig m_canvasConfig;
-	std::unique_ptr<Canvas> m_canvas;
-
 	sf::Texture m_icon;
 
+	DocumentManager m_documentManager;
 	gui::UIManager m_uiManager;
 
 	std::vector<events::UIEvent> m_eventQueue;
 
 	// --- Private Methods ---
-	void createNewCanvas(sf::Vector2u size, sf::Color color = sf::Color::White);
-	void createNewCanvas(unsigned int x, unsigned int y, sf::Color color = sf::Color::White);
 
 	void processAppEvent(const events::UIEvent& uiEvent);
-	void processSystemEvent(gui::UIContext& context);
+	void processSystemEvent();
 public:
 	// --- Constructors - Destructor ---
 	Application();

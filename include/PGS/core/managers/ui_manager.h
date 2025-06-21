@@ -3,7 +3,7 @@
 // -- PGS Headers --
 #include "PGS/gui/ui_context.h"
 #include "PGS/gui/widget.h"
-#include "PGS/gui/ui_manager_interface.h"
+#include "PGS/core/managers/ui_manager_interface.h"
 #include "PGS/gui/types.h"
 
 // -- Libraries Headers --

@@ -26,7 +26,7 @@ PGS::Application::Application(sf::Vector2u windowSize)
 	: m_window{sf::VideoMode(windowSize), "PixelGen Studio"}
 	, m_imguiIsInitialized{false}
 
-	, m_canvas{ std::make_unique<Canvas>(m_canvasConfig.getDefaultSize()) }
+	, m_documentManager{}
 
 	, m_uiManager(m_icon)
 {
@@ -53,10 +53,6 @@ PGS::Application::Application(sf::Vector2u windowSize)
 
 	// Menu Bar create
 	m_uiManager.createWidget(typeid(gui::MenuBar));
-
-	// Canvas Setup
-	m_canvas->clear(sf::Color::White);
-	m_canvas->updateTexture();
 }
 
 // --- Destructor ---
@@ -66,22 +62,7 @@ PGS::Application::~Application()
 		ImGui::SFML::Shutdown();
 }
 
-
 // --- Private methods ---
-void PGS::Application::createNewCanvas(const sf::Vector2u size, const sf::Color color)
-{
-	createNewCanvas(size.x, size.y, color);
-}
-void PGS::Application::createNewCanvas(unsigned int x, unsigned int y, const sf::Color color)
-{
-	if (x == 0 || y == 0) return;
-
-	m_canvas = std::make_unique<Canvas>(x, y);
-
-	m_canvas->clear(color);
-	m_canvas->updateTexture();
-}
-
 void PGS::Application::processAppEvent(const events::UIEvent& uiEvent)
 {
 	std::visit([this](auto&& arg) {
@@ -89,7 +70,7 @@ void PGS::Application::processAppEvent(const events::UIEvent& uiEvent)
 
 		if constexpr (std::is_same_v<T, events::NewCanvasRequest>)
 		{
-			createNewCanvas(arg.size, arg.bgColor);
+			m_documentManager.createNewDocument(arg.size, arg.bgColor);
 		}
 
 		else if constexpr (std::is_same_v<T, events::CloseWidget>)
@@ -108,7 +89,7 @@ void PGS::Application::processAppEvent(const events::UIEvent& uiEvent)
 	}, uiEvent);
 }
 
-void PGS::Application::processSystemEvent(gui::UIContext& context)
+void PGS::Application::processSystemEvent()
 {
 	while(const auto event = m_window.pollEvent()) {
 		ImGui::SFML::ProcessEvent(m_window, *event);
@@ -161,17 +142,18 @@ void PGS::Application::run()
 			.uiManager = m_uiManager
 		};
 
-		// Canvas parameters
+		// Canvas Parameters
 		const ImGuiViewport* viewport = ImGui::GetMainViewport();
-		sf::FloatRect canvasBounds{ sf::Vector2f{ viewport->WorkPos.x,  viewport->WorkPos.y  },
+		const sf::FloatRect canvasBounds{ sf::Vector2f{ viewport->WorkPos.x,  viewport->WorkPos.y  },
 									sf::Vector2f{ viewport->WorkSize.x, viewport->WorkSize.y } };
 
 		// -- System Event processing --
-		processSystemEvent(context);
+		processSystemEvent();
 
 		// -- Update --
 		ImGui::SFML::Update(m_window, deltaTime);
 		m_uiManager.update(deltaTime);
+		m_documentManager.update(deltaTime);
 
 		// -- Render --
 		m_window.clear(sf::Color(21, 21, 21, 255));
@@ -179,7 +161,7 @@ void PGS::Application::run()
 		ImGui::ShowStyleEditor(); // TODO: Delete this string, this is for testing
 
 		m_uiManager.render(context);
-		m_canvas->render(m_window, canvasBounds, 1.5);
+		m_documentManager.render(m_window, canvasBounds);
 		ImGui::SFML::Render(m_window);
 
 		// -- Display --

@@ -1,4 +1,4 @@
-#include "PGS/gui/ui_manager.h"
+#include "PGS/core/managers/ui_manager.h"
 
 // -- PGS Headers --
 #include "PGS/gui/widget.h"
