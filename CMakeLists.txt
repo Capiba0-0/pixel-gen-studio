@@ -8,8 +8,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED true)
 find_package(SFML 3.0.0 REQUIRED COMPONENTS System Window Graphics CONFIG)
 find_package(OpenGL REQUIRED)
 
-# Manual integration of ImGui and ImGui-SFML due to issues with vcpkg port at the time of development. Source files are located in third_party
-include_directories(include third_party/imgui/include third_party/imgui-sfml/include)
+# Manual integration of ImGui and ImGui-SFML due to issues with vcpkg port at the time of development.
+# Source files are located in third_party
+include_directories(include third_party/imgui/include third_party/imgui-sfml/include third_party/imnodes/include)
 
 set(IMGUI_SOURCES
     third_party/imgui/imgui.cpp 
@@ -23,19 +24,29 @@ set(IMGUI_SFML_SOURCES
     third_party/imgui-sfml/imgui-SFML.cpp
 )
 
-add_executable(${PROJECT_NAME}
+set(IMGUI_IMNODES_SOURCES
+    third_party/imnodes/imnodes.cpp
+)
+
+add_executable(${PROJECT_NAME} # TODO: Split the .cpp connection into smaller CMakeLists.txt
     src/core/application.cpp
-    src/core/main.cpp 
-    src/core/pixel_buffer.cpp
-        src/core/managers/document_manager.cpp
+    src/core/main.cpp
+    src/core/buffers/greyscale_buffer.cpp
+    src/core/buffers/pixel_buffer.cpp
+    src/core/buffers/vector_field_buffer.cpp
+    src/core/managers/document_manager.cpp
     src/core/managers/ui_manager.cpp
     src/gui/widgets/about_window.cpp
     src/gui/widgets/menu_bar.cpp
     src/gui/widgets/new_canvas_window.cpp
     src/gui/canvas.cpp
     src/gui/imgui_setup.cpp
+    src/nodegraph/node.cpp
+    src/nodegraph/evaluator.cpp
+    src/nodegraph/nodes/checker_pattern.cpp
     ${IMGUI_SOURCES} 
     ${IMGUI_SFML_SOURCES}
+    ${IMGUI_IMNODES_SOURCES}
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE SFML::Graphics SFML::Window SFML::System)
@@ -47,7 +58,6 @@ add_custom_target(copy_assets ALL
     ${CMAKE_BINARY_DIR}/assets
 )
 
-# Робимо так, щоб копіювання виконувалось перед запуском MyApp
 add_dependencies(${PROJECT_NAME} copy_assets)
 
 # Coping DLLs to the directory of .exe file

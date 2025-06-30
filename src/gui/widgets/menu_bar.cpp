@@ -7,21 +7,18 @@
 #include "PGS/gui/widgets/about_window.h"
 #include "PGS/gui/widgets/new_canvas_window.h"
 
-PGS::gui::MenuBar::MenuBar(const sf::Texture& icon)
+PGS::Gui::MenuBar::MenuBar(const sf::Texture& icon)
     : m_menuBarFramePadding{ 0,0 }
     , m_icon{icon}
 { }
 
-void PGS::gui::MenuBar::processInput(UIContext& context)
+void PGS::Gui::MenuBar::processInput(UIContext& context)
 {
     // Nothing for now -_-
 }
 
-void PGS::gui::MenuBar::renderContent(UIContext& context)
+void PGS::Gui::MenuBar::renderContent(UIContext& context)
 {
-    if (!isVisible())
-        return;
-
     // Style config
     m_menuBarFramePadding = { ImGui::GetStyle().FramePadding.x, MENU_BAR_PADDING_Y };
     PusherStyleVar   framePadding(ImGuiStyleVar_FramePadding, m_menuBarFramePadding);

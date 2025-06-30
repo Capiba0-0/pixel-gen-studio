@@ -5,7 +5,7 @@
 
 #include <SFML/Graphics/Texture.hpp>
 
-namespace PGS::gui
+namespace PGS::Gui
 {
 
 class AboutWindow final : public Widget

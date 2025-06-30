@@ -5,7 +5,7 @@
 
 #include <vector>
 
-namespace PGS::config
+namespace PGS::Config
 {
 
 struct CanvasConfig
@@ -17,14 +17,14 @@ struct CanvasConfig
 		{256, 256}
 	};
 
-	const int defaultSizeIndex = 0;
+	const int DEFAULT_SIZE_INDEX = 0;
 
-	const sf::Color color = sf::Color::White;
+	const sf::Color COLOR = sf::Color::White;
 
 	[[nodiscard]] sf::Vector2u getDefaultSize() const
 	{
-		if (defaultSizeIndex >= 0 && defaultSizeIndex < sizeOptions.size())
-			return sizeOptions[defaultSizeIndex];
+		if (DEFAULT_SIZE_INDEX >= 0 && DEFAULT_SIZE_INDEX < sizeOptions.size())
+			return sizeOptions[DEFAULT_SIZE_INDEX];
 
 		return sf::Vector2u{ 32, 32 };
 	}

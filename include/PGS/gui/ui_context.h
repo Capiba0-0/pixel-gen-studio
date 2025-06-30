@@ -7,9 +7,9 @@
 
 #include <functional>
 
-namespace PGS::gui
+namespace PGS::Gui
 {
-using EventEmitter = std::function<void(const events::UIEvent&)>;
+using EventEmitter = std::function<void(const Events::UIEvent&)>;
 
 struct UIContext
 {

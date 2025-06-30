@@ -1,7 +1,6 @@
 #include "PGS/core/managers/document_manager.h"
 
 #include "PGS/core/config.h"
-#include "PGS/generators/procedural_generator.h"
 
 PGS::DocumentManager::DocumentManager()
     : m_pixelBuffer{ std::make_shared<PixelBuffer>(m_canvasConfig.getDefaultSize())}
@@ -22,13 +21,9 @@ void PGS::DocumentManager::createNewDocument(sf::Vector2u size, const sf::Color 
     m_canvasView.setPixelBuffer(newPixelBuffer); // Reset PixelBuffer
 }
 
-void PGS::DocumentManager::applyGenerator(generators::ProceduralGeneratorBase& generator)
+std::shared_ptr<PGS::PixelBuffer> PGS::DocumentManager::getPixelBuffer()
 {
-    if (!m_pixelBuffer) return;
-
-    generator.generate(*m_pixelBuffer);
-
-    m_canvasView.markForUpdate();
+    return m_pixelBuffer;
 }
 
 

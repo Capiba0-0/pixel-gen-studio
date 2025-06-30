@@ -23,20 +23,20 @@ class Application
 private:
 	sf::RenderWindow m_window;
 	sf::Clock m_deltaClock;
-	bool m_imguiIsInitialized;
+	bool m_imguiIsInitialized; // TODO: Make RAII-wrapper for ImGui initialization
 
 	static constexpr sf::Vector2u MIN_WINDOW_SIZE = { 400, 300 };
 
 	sf::Texture m_icon;
 
 	DocumentManager m_documentManager;
-	gui::UIManager m_uiManager;
+	Gui::UIManager m_uiManager;
 
-	std::vector<events::UIEvent> m_eventQueue;
+	std::vector<Events::UIEvent> m_eventQueue;
 
 	// --- Private Methods ---
 
-	void processAppEvent(const events::UIEvent& uiEvent);
+	void processAppEvent(const Events::UIEvent& uiEvent);
 	void processSystemEvent();
 public:
 	// --- Constructors - Destructor ---

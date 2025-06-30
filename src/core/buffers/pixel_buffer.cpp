@@ -1,6 +1,10 @@
-#include "PGS/core/pixel_buffer.h"
+#include "PGS/core/buffers/pixel_buffer.h"
 
+#include <cstdint>
+
+#ifndef NDEBUG
 #include <stdexcept>
+#endif
 
 PGS::PixelBuffer::PixelBuffer(const sf::Vector2u& size)
     : m_size(size)
@@ -11,9 +15,11 @@ PGS::PixelBuffer::PixelBuffer(const sf::Vector2u& size)
 
 void PGS::PixelBuffer::setPixel(const sf::Vector2u& pos, const sf::Color& color)
 {
+#ifndef NDEBUG
     if (pos.x >= m_size.x || pos.y >= m_size.y)
         throw std::invalid_argument("X must be in [0, " + std::to_string(m_size.x - 1) + "] and " +
             "Y must be in [0, " + std::to_string(m_size.y - 1) + "]");
+#endif
 
     const unsigned int index = (pos.y * m_size.x + pos.x) * 4;
 
@@ -25,9 +31,11 @@ void PGS::PixelBuffer::setPixel(const sf::Vector2u& pos, const sf::Color& color)
 
 sf::Color PGS::PixelBuffer::getPixel(const sf::Vector2u& pos) const
 {
+#ifndef NDEBUG
     if (pos.x >= m_size.x || pos.y >= m_size.y)
         throw std::invalid_argument("X must be in [0, " + std::to_string(m_size.x - 1) + "] and " +
             "Y must be in [0, " + std::to_string(m_size.y - 1) + "]");
+#endif
 
     const unsigned int index = (pos.y * m_size.x + pos.x) * 4;
 
@@ -39,8 +47,8 @@ sf::Color PGS::PixelBuffer::getPixel(const sf::Vector2u& pos) const
     };
 }
 
-void PGS::PixelBuffer::clear(const sf::Color& color)
-{
+void PGS::PixelBuffer::clear(const sf::Color& color) // TODO: This realization doesn't work at Big-endian architecture.
+{                                                    //       Make it portable
     const uint32_t packedColor = (static_cast<uint32_t>(color.a) << 24) |
                            (static_cast<uint32_t>(color.b) << 16) |
                            (static_cast<uint32_t>(color.g) << 8)  |

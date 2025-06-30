@@ -3,15 +3,25 @@
 #include <SFML/System/Vector2.hpp>
 #include <SFML/Graphics/Color.hpp>
 
+#include <functional>
 #include <variant>
 
-namespace PGS::gui
+namespace PGS
+{
+
+namespace Gui
 {
 	class Widget;
 }
 
-namespace PGS::events
+class PixelBuffer;
+
+} // namespace PGS
+
+
+namespace PGS::Events
 {
+
 struct NewCanvasRequest
 {
 	sf::Vector2u size;
@@ -20,17 +30,22 @@ struct NewCanvasRequest
 
 struct CloseWidget
 {
-	gui::Widget* targetWidget;
+	Gui::Widget* targetWidget;
 };
 
 struct RequestFocus
 {
-	gui::Widget* targetWidget;
+	Gui::Widget* targetWidget;
 };
 
 struct RequestModal
 {
-	gui::Widget* targetWidget;
+	Gui::Widget* targetWidget;
+};
+
+struct ApplyGeneratorReq
+{
+	std::function<void(PixelBuffer&)> command;
 };
 
 // UIEvent
@@ -39,7 +54,8 @@ using UIEvent = std::variant<
 	NewCanvasRequest,
 	CloseWidget,
 	RequestFocus,
-	RequestModal
+	RequestModal,
+	ApplyGeneratorReq
 >;
 
 } // namespace PGS::events

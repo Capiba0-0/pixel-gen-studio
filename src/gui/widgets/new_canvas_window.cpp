@@ -6,13 +6,13 @@
 
 #include "imgui.h"
 
-PGS::gui::NewCanvasWindow::NewCanvasWindow()
-	: m_currentSelectionIndex{ m_config.defaultSizeIndex }
+PGS::Gui::NewCanvasWindow::NewCanvasWindow()
+	: m_currentSelectionIndex{ m_config.DEFAULT_SIZE_INDEX }
 	, m_bgColor{ 
-		static_cast<float>(m_config.color.r) / 255.0f,
-		static_cast<float>(m_config.color.g) / 255.0f,
-		static_cast<float>(m_config.color.b) / 255.0f,
-		static_cast<float>(m_config.color.a) / 255.0f 
+		static_cast<float>(m_config.COLOR.r) / 255.0f,
+		static_cast<float>(m_config.COLOR.g) / 255.0f,
+		static_cast<float>(m_config.COLOR.b) / 255.0f,
+		static_cast<float>(m_config.COLOR.a) / 255.0f 
 	}
 {
 	m_sizeItems.reserve(m_config.sizeOptions.size());
@@ -22,11 +22,8 @@ PGS::gui::NewCanvasWindow::NewCanvasWindow()
 	}
 }
 
-void PGS::gui::NewCanvasWindow::renderContent(UIContext& context)
+void PGS::Gui::NewCanvasWindow::renderContent(UIContext& context)
 {
-	if (!m_isVisible)
-		return;
-
 	// Style configuration
 	PusherStyleColor windowBg{ ImGuiCol_WindowBg, ImVec4{ 0.09f, 0.09f, 0.09f, 1.00f } };
 
@@ -61,7 +58,7 @@ void PGS::gui::NewCanvasWindow::renderContent(UIContext& context)
 	ImGui::NewLine();
 
 	if (ImGui::Button("Create")) {
-		PGS::events::NewCanvasRequest eventData;
+		PGS::Events::NewCanvasRequest eventData;
 		eventData.size = m_config.sizeOptions[m_currentSelectionIndex];
 		eventData.bgColor = sf::Color(
 			static_cast<uint8_t>(m_bgColor[0] * 255.0f),
@@ -72,11 +69,11 @@ void PGS::gui::NewCanvasWindow::renderContent(UIContext& context)
 
 		context.emit(eventData);
 
-		context.emit(events::CloseWidget{this});
+		context.emit(Events::CloseWidget{this});
 	}
 	ImGui::SameLine();
 	if (ImGui::Button("Cancel")) {
-		context.emit(events::CloseWidget{this});
+		context.emit(Events::CloseWidget{this});
 	}
 
 	ImGui::End();

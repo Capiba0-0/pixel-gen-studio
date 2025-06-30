@@ -4,7 +4,7 @@
 #include "PGS/gui/ui_context.h"
 #include "PGS/gui/widget.h"
 #include "PGS/core/managers/ui_manager_interface.h"
-#include "PGS/gui/types.h"
+#include "PGS/core/types.h"
 
 // -- Libraries Headers --
 #include <SFML/Window/Event.hpp>
@@ -19,14 +19,14 @@
 #include <tuple>
 #include <functional>
 
-namespace PGS::gui
+namespace PGS::Gui
 {
 
 class UIManager final : public UIManagerInterface
 {
 private:
     using WidgetFactory = std::function<std::unique_ptr<Widget>()>;
-    std::unordered_map<std::type_index, WidgetFactory> m_factories;
+    std::unordered_map<std::type_index, WidgetFactory> m_widgetFactories;
 
     std::unordered_map<WidgetID, std::unique_ptr<Widget>> m_widgets;
     std::vector<WidgetID> m_renderStack;
@@ -56,13 +56,13 @@ public:
     template<typename T, typename... Args>
     void registerWidgetType(Args&&... args)
     {
-        static_assert(std::is_base_of_v<Widget, T>, "Type must be derived from Widget.");
+        static_assert(std::is_base_of_v<Widget, T>, "Type must be derived from PGS::Gui::Widget");
 
         const std::type_index typeIndex = typeid(T);
 
         auto argsTuple = std::forward_as_tuple(std::forward<Args>(args)...);
 
-        m_factories[typeIndex] = [argsTuple]()
+        m_widgetFactories[typeIndex] = [argsTuple]()
         {
             return std::apply(
                 [](auto&&... args) { return std::make_unique<T>(std::forward<decltype(args)>(args)...); },

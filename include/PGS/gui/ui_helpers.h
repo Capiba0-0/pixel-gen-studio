@@ -3,7 +3,7 @@
 #include "imgui.h"
 #include <SFML/System/Vector2.hpp>
 
-namespace PGS::gui
+namespace PGS::Gui
 {
 struct PusherStyleVar
 {

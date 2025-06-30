@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 
-namespace PGS::gui
+namespace PGS::Gui
 {
 
 class NewCanvasWindow final : public Widget
@@ -18,7 +18,7 @@ public:
 	void renderContent(UIContext& context) override;
 
 private:
-	config::CanvasConfig m_config;
+	Config::CanvasConfig m_config;
 	int m_currentSelectionIndex;
 	float m_bgColor[4]; 
 

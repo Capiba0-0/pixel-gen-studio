@@ -6,7 +6,7 @@
 #include <utility>
 
 // --- Constructors ---
-PGS::gui::Canvas::Canvas(std::shared_ptr<PixelBuffer> pixelBuffer)
+PGS::Gui::Canvas::Canvas(std::shared_ptr<PixelBuffer> pixelBuffer)
 	: m_sprite(m_texture)
 
 	, m_needsUpdate(true)
@@ -15,7 +15,7 @@ PGS::gui::Canvas::Canvas(std::shared_ptr<PixelBuffer> pixelBuffer)
 }
 
 // --- Methods ---
-void PGS::gui::Canvas::setPixelBuffer(std::shared_ptr<PixelBuffer> pixelBuffer)
+void PGS::Gui::Canvas::setPixelBuffer(std::shared_ptr<PixelBuffer> pixelBuffer)
 {
 	if (!pixelBuffer)
 		throw std::invalid_argument("PixelBuffer is null");
@@ -30,12 +30,12 @@ void PGS::gui::Canvas::setPixelBuffer(std::shared_ptr<PixelBuffer> pixelBuffer)
 	markForUpdate();
 }
 
-void PGS::gui::Canvas::markForUpdate()
+void PGS::Gui::Canvas::markForUpdate()
 {
 	m_needsUpdate = true;
 }
 
-void PGS::gui::Canvas::update()
+void PGS::Gui::Canvas::update()
 {
 	if (m_needsUpdate)
 	{
@@ -44,7 +44,7 @@ void PGS::gui::Canvas::update()
 	}
 }
 
-void PGS::gui::Canvas::render(sf::RenderTarget& target, const sf::FloatRect& bounds, const float factor)
+void PGS::Gui::Canvas::render(sf::RenderTarget& target, const sf::FloatRect& bounds, const float factor)
 {
 	const float scaleX = bounds.size.x / static_cast<float>(m_pixelBuffer->getSize().x);
 	const float scaleY = bounds.size.y / static_cast<float>(m_pixelBuffer->getSize().y);

@@ -5,13 +5,13 @@
 #include "PGS/gui/widgets/about_window.h"
 #include "PGS/gui/widgets/menu_bar.h"
 #include "PGS/gui/widgets/new_canvas_window.h"
-#include "PGS/gui/types.h"
+#include "PGS/core/types.h"
 
 // -- STL Headers --
 #include <algorithm>
 
 // --- Constructor ---
-PGS::gui::UIManager::UIManager(sf::Texture& icon) // TODO: Normal Resource manager
+PGS::Gui::UIManager::UIManager(sf::Texture& icon) // TODO: Normal Resource manager
 {
     registerWidgetType<AboutWindow>(icon);
     registerWidgetType<MenuBar>(icon);
@@ -19,7 +19,7 @@ PGS::gui::UIManager::UIManager(sf::Texture& icon) // TODO: Normal Resource manag
 }
 
 // --- Methods ---
-void PGS::gui::UIManager::render(UIContext& context)
+void PGS::Gui::UIManager::render(UIContext& context)
 {
     for (auto id : m_renderStack)
     {
@@ -28,7 +28,7 @@ void PGS::gui::UIManager::render(UIContext& context)
     }
 }
 
-void PGS::gui::UIManager::onEvent(const sf::Event& event)
+void PGS::Gui::UIManager::onEvent(const sf::Event& event)
 {
     if (m_renderStack.empty())
         return;
@@ -44,7 +44,7 @@ void PGS::gui::UIManager::onEvent(const sf::Event& event)
         it->second->onEvent(event);
 }
 
-void PGS::gui::UIManager::update(const sf::Time deltaTime)
+void PGS::Gui::UIManager::update(const sf::Time deltaTime)
 {
     if (m_renderStack.empty())
         return;
@@ -52,12 +52,11 @@ void PGS::gui::UIManager::update(const sf::Time deltaTime)
     for (auto id : m_renderStack)
     {
         if (auto it = m_widgets.find(id); it != m_widgets.end())
-            if (it->second->isVisible())
-                it->second->update(deltaTime);
+            it->second->update(deltaTime);
     }
 }
 
-PGS::gui::WidgetID PGS::gui::UIManager::widgetToId(Widget* widget)
+PGS::Gui::WidgetID PGS::Gui::UIManager::widgetToId(Widget* widget)
 {
     if (const auto it = m_mapWidgetToId.find(widget); it != m_mapWidgetToId.end()) {
         return it->second;
@@ -68,16 +67,16 @@ PGS::gui::WidgetID PGS::gui::UIManager::widgetToId(Widget* widget)
 
 
 // --- Private Methods ---
-PGS::gui::WidgetID PGS::gui::UIManager::generateNextID()
+PGS::Gui::WidgetID PGS::Gui::UIManager::generateNextID()
 {
     return s_nextWidgetID++;
 }
 
 // --- WidgetManager Overrides ---
-PGS::gui::WidgetID PGS::gui::UIManager::createWidget(const std::type_index& typeIndex)
+PGS::Gui::WidgetID PGS::Gui::UIManager::createWidget(const std::type_index& typeIndex)
 {
-    const auto factory = m_factories.find(typeIndex);
-    if (factory == m_factories.end())
+    const auto factory = m_widgetFactories.find(typeIndex);
+    if (factory == m_widgetFactories.end())
         return INVALID_WIDGET_ID;
 
     std::unique_ptr<Widget> newWidget = factory->second();
@@ -90,7 +89,7 @@ PGS::gui::WidgetID PGS::gui::UIManager::createWidget(const std::type_index& type
     return newId;
 }
 
-void PGS::gui::UIManager::closeWidget(const WidgetID id)
+void PGS::Gui::UIManager::closeWidget(const WidgetID id)
 {
     if (m_widgets.find(id) == m_widgets.end())
         return;
@@ -105,7 +104,7 @@ void PGS::gui::UIManager::closeWidget(const WidgetID id)
     m_widgets.erase(id);
 }
 
-void PGS::gui::UIManager::requestFocus(WidgetID id)
+void PGS::Gui::UIManager::requestFocus(WidgetID id)
 {
     if (m_widgets.find(id) == m_widgets.end())
         return;
@@ -114,7 +113,7 @@ void PGS::gui::UIManager::requestFocus(WidgetID id)
     m_renderStack.push_back(id);
 }
 
-void PGS::gui::UIManager::requestModal(WidgetID id)
+void PGS::Gui::UIManager::requestModal(WidgetID id)
 {
     if (m_widgets.find(id) == m_widgets.end())
         return;

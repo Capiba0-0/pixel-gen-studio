@@ -7,7 +7,7 @@
 
 #include "PGS/gui/canvas.h"
 
-void PGS::gui::setFonts()
+void PGS::Gui::setFonts()
 {
     ImGuiIO& io = ImGui::GetIO();
     ImFont* mainFont = io.Fonts->AddFontFromFileTTF("assets/fonts/Inter-VariableFont.ttf", 15.0f);
@@ -20,7 +20,7 @@ void PGS::gui::setFonts()
         throw std::runtime_error("Failed to update font texture for ImGui-SFML");
 }
 
-void PGS::gui::applyImguiStyle()
+void PGS::Gui::applyImguiStyle()
 {
     ImGuiStyle& style = ImGui::GetStyle();
 

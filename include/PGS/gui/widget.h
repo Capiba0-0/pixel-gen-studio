@@ -6,14 +6,11 @@
 #include <SFML/Window/Event.hpp>
 #include <SFML/System/Time.hpp>
 
-namespace PGS::gui
+namespace PGS::Gui
 {
 
 class Widget
 {
-protected:
-	bool m_isVisible = true;
-
 public:
 	// No-copyable
 	Widget(const Widget&) = delete;
@@ -26,13 +23,9 @@ public:
 	// Destructor
 	virtual ~Widget() = default;
 
-	[[nodiscard]] virtual bool isVisible() const { return m_isVisible; }
-	virtual void makeVisible() { m_isVisible = true; }
-	virtual void makeInvisible() { m_isVisible = false; }
-
 	virtual void renderContent(UIContext& context) = 0;
 
-	virtual void update(sf::Time deltaTime) { }
+	virtual void update(const sf::Time deltaTime) { }
 	virtual void onEvent(const sf::Event& event) { }
 
 protected:
@@ -41,7 +34,7 @@ protected:
 		if (ImGui::IsWindowHovered() &&
 			ImGui::IsMouseClicked(ImGuiMouseButton_Left | ImGuiMouseButton_Middle | ImGuiMouseButton_Right))
 		{
-			context.emit(events::RequestFocus{this});
+			context.emit(Events::RequestFocus{this});
 		}
 	}
 };

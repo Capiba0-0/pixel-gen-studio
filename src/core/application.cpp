@@ -48,11 +48,11 @@ PGS::Application::Application(sf::Vector2u windowSize)
 	m_icon.setSmooth(true);
 
 	// ImGui Setup
-	gui::applyImguiStyle();
-	gui::setFonts();
+	Gui::applyImguiStyle();
+	Gui::setFonts();
 
 	// Menu Bar create
-	m_uiManager.createWidget(typeid(gui::MenuBar));
+	m_uiManager.createWidget(typeid(Gui::MenuBar));
 }
 
 // --- Destructor ---
@@ -63,27 +63,33 @@ PGS::Application::~Application()
 }
 
 // --- Private methods ---
-void PGS::Application::processAppEvent(const events::UIEvent& uiEvent)
+void PGS::Application::processAppEvent(const Events::UIEvent& uiEvent)
 {
 	std::visit([this](auto&& arg) {
 		using T = std::decay_t<decltype(arg)>;
 
-		if constexpr (std::is_same_v<T, events::NewCanvasRequest>)
+		if constexpr (std::is_same_v<T, Events::NewCanvasRequest>)
 		{
 			m_documentManager.createNewDocument(arg.size, arg.bgColor);
 		}
 
-		else if constexpr (std::is_same_v<T, events::CloseWidget>)
+		else if constexpr (std::is_same_v<T, Events::CloseWidget>)
 		{
 			m_uiManager.closeWidget(m_uiManager.widgetToId(arg.targetWidget));
 		}
-		else if constexpr (std::is_same_v<T, events::RequestFocus>)
+		else if constexpr (std::is_same_v<T, Events::RequestFocus>)
 		{
 			m_uiManager.requestFocus(m_uiManager.widgetToId(arg.targetWidget));
 		}
-		else if constexpr (std::is_same_v<T, events::RequestModal>)
+		else if constexpr (std::is_same_v<T, Events::RequestModal>)
 		{
 			m_uiManager.requestModal(m_uiManager.widgetToId(arg.targetWidget));
+		}
+
+		else if constexpr (std::is_same_v<T, Events::ApplyGeneratorReq>)
+		{
+			std::shared_ptr<PixelBuffer> pixelBuffer = m_documentManager.getPixelBuffer();
+			arg.command(*pixelBuffer);
 		}
 
 	}, uiEvent);
@@ -130,12 +136,12 @@ void PGS::Application::run()
 		// -- New Frame parameters --
 		const sf::Time deltaTime = m_deltaClock.restart();
 
-		const gui::EventEmitter emitter = [&](const events::UIEvent& uiEvent)
+		const Gui::EventEmitter emitter = [&](const Events::UIEvent& uiEvent)
 		{
 			m_eventQueue.push_back(uiEvent);
 		};
 
-		gui::UIContext context
+		Gui::UIContext context
 		{
 			.emit = emitter,
 			.deltaTime = deltaTime,

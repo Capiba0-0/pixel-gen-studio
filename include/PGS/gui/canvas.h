@@ -1,13 +1,13 @@
 #pragma once
 
-#include "PGS/core/pixel_buffer.h"
+#include "PGS/core/buffers/pixel_buffer.h"
 
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Sprite.hpp>
 
 #include <memory>
 
-namespace PGS::gui
+namespace PGS::Gui
 {
 class Canvas
 {

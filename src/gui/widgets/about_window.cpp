@@ -5,15 +5,12 @@
 #include "imgui.h"
 #include "imgui-SFML.h"
 
-PGS::gui::AboutWindow::AboutWindow(const sf::Texture& icon)
+PGS::Gui::AboutWindow::AboutWindow(const sf::Texture& icon)
 	: m_icon(icon)
 { }
 
-void PGS::gui::AboutWindow::renderContent(UIContext& context)
+void PGS::Gui::AboutWindow::renderContent(UIContext& context)
 {
-	if (!isVisible())
-		return;
-
 	// Style configuration
 	PusherStyleColor windowBg{ ImGuiCol_WindowBg, ImVec4{ 0.09f, 0.09f, 0.09f, 1.00f } };
 
@@ -59,7 +56,7 @@ void PGS::gui::AboutWindow::renderContent(UIContext& context)
 	// Close logic
 	if (ImGui::IsMouseClicked(ImGuiMouseButton_Left)) {
 		if (!ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow)) {
-			context.emit(events::CloseWidget{this});
+			context.emit(Events::CloseWidget{this});
 		}
 	}
 

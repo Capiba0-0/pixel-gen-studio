@@ -1,10 +1,10 @@
 #pragma once
 
-#include "PGS/gui/types.h"
+#include "../types.h"
 
 #include <typeindex>
 
-namespace PGS::gui
+namespace PGS::Gui
 {
 
 class UIManagerInterface

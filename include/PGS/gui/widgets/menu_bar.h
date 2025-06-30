@@ -6,7 +6,7 @@
 #include "imgui.h"
 #include <SFML/Graphics/Texture.hpp>
 
-namespace PGS::gui {
+namespace PGS::Gui {
 
 class MenuBar final : public Widget
 {

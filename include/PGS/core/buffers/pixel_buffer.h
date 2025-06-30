@@ -8,6 +8,7 @@
 
 namespace PGS
 {
+
 class PixelBuffer
 {
 private:
@@ -28,6 +29,5 @@ public:
     [[nodiscard]] sf::Vector2u getSize() const;
     [[nodiscard]] const uint8_t* getData() const;
 };
-
 
 } // namespace PGS

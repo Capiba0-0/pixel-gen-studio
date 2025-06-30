@@ -1,6 +1,6 @@
 #pragma once
 
-namespace PGS::gui 
+namespace PGS::Gui 
 {
 void setFonts();
 

@@ -16,15 +16,15 @@ namespace PGS
 class PixelBuffer;
 
 namespace generators {
-    class ProceduralGeneratorBase;
+    class GeneratorAlgorithm;
 }
 
 class DocumentManager
 {
 private:
-    config::CanvasConfig m_canvasConfig;
+    const Config::CanvasConfig m_canvasConfig;
     std::shared_ptr<PixelBuffer> m_pixelBuffer;
-    gui::Canvas m_canvasView;
+    Gui::Canvas m_canvasView;
 
     const float CANVAS_PADDING_FACTOR = 1.5f;
 
@@ -34,7 +34,7 @@ public:
 
     void createNewDocument(sf::Vector2u size, sf::Color color = sf::Color::White);
 
-    void applyGenerator(generators::ProceduralGeneratorBase& generator);
+    std::shared_ptr<PixelBuffer> getPixelBuffer();
 
     void update(sf::Time deltaTime);
     void render(sf::RenderTarget& target, const sf::FloatRect& bounds);
