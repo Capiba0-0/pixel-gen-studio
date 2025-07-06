@@ -16,6 +16,7 @@ private:
     const NodeID m_id;
     std::string m_name;
 
+    // TODO: It may be better to keep std::vector to maintain order
     std::unordered_map<PortID, InputPort> m_inputPorts;
     std::unordered_map<PortID, OutputPort> m_outputPorts;
 

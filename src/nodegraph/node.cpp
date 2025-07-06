@@ -39,6 +39,7 @@ const std::unordered_map<PGS::NodeGraph::PortID, PGS::NodeGraph::OutputPort>& PG
     return m_outputPorts;
 }
 
+
 // -- Setters --
 void PGS::NodeGraph::Node::setName(std::string name)
 {

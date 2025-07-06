@@ -3,12 +3,16 @@
 // -- PGS Headers --
 #include "PGS/gui/imgui_setup.h"
 #include "PGS/gui/widgets/menu_bar.h"
+#include "../../include/PGS/gui/node_editor/node_editor_widget.h"
 #include "PGS/gui/ui_events.h"
 #include "PGS/gui/ui_context.h"
+#include "PGS/nodegraph/node.h"
 
 // -- Libraries Headers --
 #include "imgui.h"
+#include "imgui_internal.h"
 #include "imgui-SFML.h"
+#include "imnodes.h"
 #include <SFML/Window/Event.hpp>
 
 // -- STL Headers --
@@ -39,6 +43,7 @@ PGS::Application::Application(sf::Vector2u windowSize)
 	// ImGui-SGML init
 	if (!ImGui::SFML::Init(m_window))
 		throw std::runtime_error("FATAL ERROR: Failed to initialize ImGui-SFML. UI will not be available.");
+	ImNodes::CreateContext();
 	m_imguiIsInitialized = true;
 
 	// Initialize PGS icon
@@ -49,17 +54,28 @@ PGS::Application::Application(sf::Vector2u windowSize)
 
 	// ImGui Setup
 	Gui::applyImguiStyle();
+	Gui::applyImNodesStyle();
 	Gui::setFonts();
 
 	// Menu Bar create
 	m_uiManager.createWidget(typeid(Gui::MenuBar));
+	m_uiManager.createWidget(typeid(Gui::NodeEditorWidget),
+	[this](Gui::Widget& widget)
+	{
+		if (auto* nodeEditor = dynamic_cast<Gui::NodeEditorWidget*>(&widget)) {
+			nodeEditor->initialize(m_evaluator);
+		}
+	});
 }
 
 // --- Destructor ---
 PGS::Application::~Application()
 {
 	if (m_imguiIsInitialized)
+	{
+		ImNodes::DestroyContext();
 		ImGui::SFML::Shutdown();
+	}
 }
 
 // --- Private methods ---
@@ -85,17 +101,15 @@ void PGS::Application::processAppEvent(const Events::UIEvent& uiEvent)
 		{
 			m_uiManager.requestModal(m_uiManager.widgetToId(arg.targetWidget));
 		}
-
-		else if constexpr (std::is_same_v<T, Events::ApplyGeneratorReq>)
+		else if constexpr (std::is_same_v<T, Events::RequestQuit>)
 		{
-			std::shared_ptr<PixelBuffer> pixelBuffer = m_documentManager.getPixelBuffer();
-			arg.command(*pixelBuffer);
+			quitWindow();
 		}
 
 	}, uiEvent);
 }
 
-void PGS::Application::processSystemEvent()
+void PGS::Application::processSystemEvent(Gui::UIContext& context)
 {
 	while(const auto event = m_window.pollEvent()) {
 		ImGui::SFML::ProcessEvent(m_window, *event);
@@ -145,28 +159,37 @@ void PGS::Application::run()
 		{
 			.emit = emitter,
 			.deltaTime = deltaTime,
-			.uiManager = m_uiManager
+			.uiManager = m_uiManager,
+			.evaluator = m_evaluator
 		};
 
-		// Canvas Parameters
-		const ImGuiViewport* viewport = ImGui::GetMainViewport();
-		const sf::FloatRect canvasBounds{ sf::Vector2f{ viewport->WorkPos.x,  viewport->WorkPos.y  },
-									sf::Vector2f{ viewport->WorkSize.x, viewport->WorkSize.y } };
-
 		// -- System Event processing --
-		processSystemEvent();
+		processSystemEvent(context);
 
 		// -- Update --
 		ImGui::SFML::Update(m_window, deltaTime);
 		m_uiManager.update(deltaTime);
-		m_documentManager.update(deltaTime);
+		m_documentManager.update(deltaTime, context);
 
 		// -- Render --
 		m_window.clear(sf::Color(21, 21, 21, 255));
 
-		ImGui::ShowStyleEditor(); // TODO: Delete this string, this is for testing
-
 		m_uiManager.render(context);
+
+		// Canvas Parameters
+		const ImGuiViewport* viewport = ImGui::GetMainViewport();
+		sf::FloatRect canvasBounds{
+			sf::Vector2f{ viewport->WorkPos.x,  viewport->WorkPos.y  },
+			sf::Vector2f{ viewport->WorkSize.x, viewport->WorkSize.y }
+		};
+
+		ImGuiWindow* nodeEditorWindow = ImGui::FindWindowByName("Node Editor");
+		if (nodeEditorWindow != nullptr && !nodeEditorWindow->Hidden)
+		{
+			const float nodeEditorWidth = nodeEditorWindow->Size.x;
+			canvasBounds.size.x -= nodeEditorWidth;
+		}
+
 		m_documentManager.render(m_window, canvasBounds);
 		ImGui::SFML::Render(m_window);
 
@@ -175,17 +198,7 @@ void PGS::Application::run()
 	}
 }
 
-void PGS::Application::undo()
+void PGS::Application::quitWindow()
 {
-
-}
-
-void PGS::Application::redo()
-{
-
-}
-
-void PGS::Application::exit()
-{
-
+	m_window.close();
 }

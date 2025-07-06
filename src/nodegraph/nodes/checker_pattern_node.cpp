@@ -1,4 +1,4 @@
-#include "PGS/nodegraph/nodes/checker_pattern.h"
+#include "PGS/nodegraph/nodes/checker_pattern_node.h"
 
 #include "PGS/core/buffers/pixel_buffer.h"
 #include "PGS/core/buffers/grayscale_buffer.h"
@@ -19,14 +19,14 @@ PGS::NodeGraph::CheckerPatternNode::CheckerPatternNode(const NodeID id, std::str
 
     registerInputPort({
         .id = "in_color1",
-        .name = "1-st Color",
+        .name = "Color1",
         .type = DataType::Color,
         .value = sf::Color::White,
     });
 
     registerInputPort({
         .id = "in_color2",
-        .name = "2-nd Color",
+        .name = "Color2",
         .type = DataType::Color,
         .value = sf::Color::Black,
     });
@@ -59,15 +59,13 @@ std::unordered_map<PGS::NodeGraph::PortID, PGS::NodeGraph::NodeData> PGS::NodeGr
     auto outGrayscale = std::make_shared<GrayscaleBuffer>(bufferSize);
 
     // Getting port values
-    std::shared_ptr<VectorFieldBuffer> vectorField;
+    std::shared_ptr<VectorFieldBuffer> vectorField = nullptr;
     if (inputs.find("in_vector") != inputs.end())
-        vectorField = getRequiredInput<std::shared_ptr<VectorFieldBuffer>>(inputs, "in_vector");
-    else
-        vectorField = nullptr;
+        vectorField = getRequiredInput<std::shared_ptr<VectorFieldBuffer>>(inputs, "in_vector", bufferSize);
 
-    const auto firstColor = getRequiredInput<std::shared_ptr<PixelBuffer>>(inputs, "in_color1");
-    const auto secondColor = getRequiredInput<std::shared_ptr<PixelBuffer>>(inputs, "in_color2");
-    const auto scale = getRequiredInput<float>(inputs, "in_scale");
+    const auto firstColor = getRequiredInput<std::shared_ptr<PixelBuffer>>(inputs, "in_color1", bufferSize);
+    const auto secondColor = getRequiredInput<std::shared_ptr<PixelBuffer>>(inputs, "in_color2", bufferSize);
+    const auto scale = getRequiredInput<float>(inputs, "in_scale", bufferSize);
 
     // Main algorithm
     sf::Color finalColor;

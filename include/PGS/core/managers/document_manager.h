@@ -12,11 +12,16 @@
 
 namespace PGS
 {
+    class PixelBuffer;
 
-class PixelBuffer;
-
-namespace generators {
+namespace generators
+{
     class GeneratorAlgorithm;
+}
+
+namespace Gui
+{
+    struct UIContext;
 }
 
 class DocumentManager
@@ -36,7 +41,7 @@ public:
 
     std::shared_ptr<PixelBuffer> getPixelBuffer();
 
-    void update(sf::Time deltaTime);
+    void update(sf::Time deltaTime, const Gui::UIContext& context);
     void render(sf::RenderTarget& target, const sf::FloatRect& bounds);
 };
 

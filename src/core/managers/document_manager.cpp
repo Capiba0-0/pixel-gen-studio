@@ -1,6 +1,7 @@
 #include "PGS/core/managers/document_manager.h"
 
 #include "PGS/core/config.h"
+#include "PGS/gui/ui_context.h"
 
 PGS::DocumentManager::DocumentManager()
     : m_pixelBuffer{ std::make_shared<PixelBuffer>(m_canvasConfig.getDefaultSize())}
@@ -27,8 +28,16 @@ std::shared_ptr<PGS::PixelBuffer> PGS::DocumentManager::getPixelBuffer()
 }
 
 
-void PGS::DocumentManager::update(sf::Time deltaTime)
+void PGS::DocumentManager::update(sf::Time deltaTime, const Gui::UIContext& context)
 {
+    const auto buffer = context.evaluator.evaluateFinalOutput(m_pixelBuffer->getSize());
+
+    if (buffer != nullptr)
+    {
+        m_pixelBuffer = buffer;
+        m_canvasView.setPixelBuffer(m_pixelBuffer);
+    }
+
     m_canvasView.update();
 }
 

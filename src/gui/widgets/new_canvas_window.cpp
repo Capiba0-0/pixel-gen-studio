@@ -58,7 +58,7 @@ void PGS::Gui::NewCanvasWindow::renderContent(UIContext& context)
 	ImGui::NewLine();
 
 	if (ImGui::Button("Create")) {
-		PGS::Events::NewCanvasRequest eventData;
+		Events::NewCanvasRequest eventData;
 		eventData.size = m_config.sizeOptions[m_currentSelectionIndex];
 		eventData.bgColor = sf::Color(
 			static_cast<uint8_t>(m_bgColor[0] * 255.0f),

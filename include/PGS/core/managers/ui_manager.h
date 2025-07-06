@@ -73,6 +73,7 @@ public:
 
     // --- WidgetManager Overrides ---
     WidgetID createWidget(const std::type_index& typeIndex) override;
+    WidgetID createWidget(const std::type_index& typeIndex, std::function<void(Widget&)> initializer) override;
     void closeWidget(WidgetID id) override;
 
     void requestFocus(WidgetID id) override;

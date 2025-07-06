@@ -2,10 +2,9 @@
 
 #include "imgui-SFML.h"
 #include "imgui.h"
+#include "imnodes.h"
 
 #include <stdexcept>
-
-#include "PGS/gui/canvas.h"
 
 void PGS::Gui::setFonts()
 {
@@ -18,6 +17,12 @@ void PGS::Gui::setFonts()
 
     if (!ImGui::SFML::UpdateFontTexture())
         throw std::runtime_error("Failed to update font texture for ImGui-SFML");
+}
+
+void PGS::Gui::applyImNodesStyle()
+{
+    ImNodesIO& imNodesIo = ImNodes::GetIO();
+    imNodesIo.LinkDetachWithModifierClick.Modifier = &ImGui::GetIO().KeyCtrl;
 }
 
 void PGS::Gui::applyImguiStyle()

@@ -2,6 +2,7 @@
 
 #include "PGS/gui/ui_events.h"
 #include "PGS/core/managers/ui_manager_interface.h"
+#include "PGS/nodegraph/evaluator.h"
 
 #include <SFML/System/Time.hpp>
 
@@ -20,6 +21,7 @@ struct UIContext
 
 	// Managers
 	UIManagerInterface& uiManager;
+	NodeGraph::Evaluator& evaluator;
 };
 
 } // namespace PGS::gui

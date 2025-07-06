@@ -5,6 +5,7 @@
 #include "PGS/gui/widgets/about_window.h"
 #include "PGS/gui/widgets/menu_bar.h"
 #include "PGS/gui/widgets/new_canvas_window.h"
+#include "PGS/gui/node_editor/node_editor_widget.h"
 #include "PGS/core/types.h"
 
 // -- STL Headers --
@@ -16,6 +17,7 @@ PGS::Gui::UIManager::UIManager(sf::Texture& icon) // TODO: Normal Resource manag
     registerWidgetType<AboutWindow>(icon);
     registerWidgetType<MenuBar>(icon);
     registerWidgetType<NewCanvasWindow>();
+    registerWidgetType<NodeEditorWidget>();
 }
 
 // --- Methods ---
@@ -75,12 +77,22 @@ PGS::Gui::WidgetID PGS::Gui::UIManager::generateNextID()
 // --- WidgetManager Overrides ---
 PGS::Gui::WidgetID PGS::Gui::UIManager::createWidget(const std::type_index& typeIndex)
 {
+    return createWidget(typeIndex, nullptr);
+}
+
+PGS::Gui::WidgetID PGS::Gui::UIManager::createWidget(const std::type_index& typeIndex, const std::function<void(Widget&)> initializer)
+{
     const auto factory = m_widgetFactories.find(typeIndex);
     if (factory == m_widgetFactories.end())
         return INVALID_WIDGET_ID;
 
     std::unique_ptr<Widget> newWidget = factory->second();
     const WidgetID newId = generateNextID();
+
+    if (initializer)
+    {
+        initializer(*newWidget);
+    }
 
     m_mapWidgetToId[newWidget.get()] = newId;
     m_widgets[newId] = std::move(newWidget);

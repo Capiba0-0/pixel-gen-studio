@@ -3,6 +3,9 @@
 #include "PGS/nodegraph/node.h"
 #include "PGS/nodegraph/types.h"
 #include "PGS/core/buffers/pixel_buffer.h"
+#include "PGS/nodegraph/evaluator_observer.h"
+#include "PGS/nodegraph/nodes/checker_pattern_node.h"
+#include "PGS/nodegraph/nodes/texture_output_node.h"
 
 #include <algorithm>
 #include <cassert>
@@ -10,7 +13,10 @@
 // -- Constructor --
 PGS::NodeGraph::Evaluator::Evaluator()
 {
+    registerNode<CheckerPatternNode>("Checker Texture");
+    registerNode<TextureOutputNode>("Texture Output");
 
+    addNode(typeid(TextureOutputNode));
 }
 
 // -- Private Methods --
@@ -105,6 +111,38 @@ PGS::NodeGraph::NodeData PGS::NodeGraph::Evaluator::convertValueToNodeData(const
     }, value);
 }
 
+void PGS::NodeGraph::Evaluator::notifyNodeAdded(const NodeID id, const Node& node) const
+{
+    for (const auto observer : m_observers)
+    {
+        observer->onNodeAdded(id, node);
+    }
+}
+
+void PGS::NodeGraph::Evaluator::notifyNodeRemoved(const NodeID id) const
+{
+    for (const auto observer : m_observers)
+    {
+        observer->onNodeRemoved(id);
+    }
+}
+
+void PGS::NodeGraph::Evaluator::notifyConnectionAdded(const Connection& connection) const
+{
+    for (const auto observer : m_observers)
+    {
+        observer->onConnectionAdded(connection);
+    }
+}
+
+void PGS::NodeGraph::Evaluator::notifyConnectionRemoved(const Connection& connection) const
+{
+    for (const auto observer : m_observers)
+    {
+        observer->onConnectionRemoved(connection);
+    }
+}
+
 
 // -- Public Methods --
 PGS::NodeGraph::NodeID PGS::NodeGraph::Evaluator::addNode(const std::type_index& typeIndex)
@@ -114,20 +152,26 @@ PGS::NodeGraph::NodeID PGS::NodeGraph::Evaluator::addNode(const std::type_index&
         return INVALID_NODE_ID;
 
     const NodeID nextId = generateNextNodeID();
-    const std::string defaultName = "Node #" + std::to_string(nextId);
+    const std::string defaultName = factory->second.name;
 
-    m_nodes[nextId] = factory->second(nextId, defaultName);
+    m_nodes[nextId] = factory->second.factoryFunction(nextId, defaultName);
+
+    if (auto* outputNode = dynamic_cast<TextureOutputNode*>(m_nodes[nextId].get())) {
+        m_outputNodes[nextId] = outputNode;
+    }
+
+    notifyNodeAdded(nextId, *m_nodes[nextId]);
 
     return nextId;
 }
 
 void PGS::NodeGraph::Evaluator::deleteNode(const NodeID& nodeId)
 {
-    const auto node = m_nodes.find(nodeId);
-    if (node == m_nodes.end())
+    const auto nodeIt = m_nodes.find(nodeId);
+    if (nodeIt == m_nodes.end())
         return;
 
-    auto inputPorts = node->second->getInputPorts();
+    auto inputPorts = nodeIt->second->getInputPorts();
     for (const auto& [portId, port] : inputPorts)
     {
         auto connectionIt = m_inputConnections.find({nodeId, portId});
@@ -136,7 +180,7 @@ void PGS::NodeGraph::Evaluator::deleteNode(const NodeID& nodeId)
 
         deleteConnection(connectionIt->second);
     }
-    auto outputPorts = node->second->getOutputPorts();
+    auto outputPorts = nodeIt->second->getOutputPorts();
     for (const auto& [portId, port] : outputPorts)
     {
         auto connectionIt = m_outputConnections.find({nodeId, portId});
@@ -150,10 +194,19 @@ void PGS::NodeGraph::Evaluator::deleteNode(const NodeID& nodeId)
         }
     }
 
+    notifyNodeRemoved(nodeId);
+
     m_dirtyFlags.erase(nodeId);
     m_nodeCaches.erase(nodeId);
-    m_nodes.erase(node);
+    m_nodes.erase(nodeIt);
+    m_outputNodes.erase(nodeId);
 }
+
+const std::unordered_map<PGS::NodeGraph::NodeID, std::unique_ptr<PGS::NodeGraph::Node>>& PGS::NodeGraph::Evaluator::getNodes() const
+{
+    return m_nodes;
+}
+
 
 void PGS::NodeGraph::Evaluator::addConnection(const Connection& connection)
 {
@@ -164,6 +217,8 @@ void PGS::NodeGraph::Evaluator::addConnection(const Connection& connection)
     if (sourceNode == m_nodes.end() || targetNode == m_nodes.end())
         return;
 
+    // TODO: Currently, you can only connect in the following sequences: `outPort` -> `inPort`,
+    //       it is necessary to make it possible to connect in the reverse order
     const auto& sourcePorts = sourceNode->second->getOutputPorts();
     const auto& targetPorts = targetNode->second->getInputPorts();
 
@@ -172,10 +227,10 @@ void PGS::NodeGraph::Evaluator::addConnection(const Connection& connection)
         return;
 
     // Check for types
-    const auto sourcePortType = sourceNode->second->getOutputPort(connection.sourcePortId).type;
-    const auto targetPortType = targetNode->second->getInputPort(connection.targetPortId).type;
+    const auto sourcePort = sourceNode->second->getOutputPort(connection.sourcePortId);
+    const auto targetPort = targetNode->second->getInputPort(connection.targetPortId);
 
-    if (sourcePortType != targetPortType)
+    if (!canConvert(sourcePort.type, targetPort.type))
         return;
 
     // Cycle check
@@ -190,6 +245,8 @@ void PGS::NodeGraph::Evaluator::addConnection(const Connection& connection)
 
     // Propagate dirty
     propagateDirtyFlag(connection.targetNodeId);
+
+    notifyConnectionAdded(connection);
 }
 
 void PGS::NodeGraph::Evaluator::deleteConnection(const Connection& connection)
@@ -201,12 +258,11 @@ void PGS::NodeGraph::Evaluator::deleteConnection(const Connection& connection)
     if (inputIt == m_inputConnections.end())
         return;
 
-    m_inputConnections.erase(inputIt);
-
-
     const auto outputIt = m_outputConnections.find(outputPortLocator);
     if (outputIt == m_outputConnections.end())
         return;
+
+    m_inputConnections.erase(inputIt);
 
     auto& vec = outputIt->second;
     const auto newEnd = std::remove_if(vec.begin(), vec.end(),
@@ -215,16 +271,70 @@ void PGS::NodeGraph::Evaluator::deleteConnection(const Connection& connection)
     });
     vec.erase(newEnd, vec.end());
 
+    notifyConnectionRemoved(connection);
+
     propagateDirtyFlag(connection.targetNodeId);
 }
 
+const std::unordered_map<PGS::NodeGraph::InputPortLocator, PGS::NodeGraph::Connection>& PGS::NodeGraph::Evaluator::getConnections() const
+{
+    return m_inputConnections;
+}
+
+const std::unordered_map<std::type_index, PGS::NodeGraph::Evaluator::NodeFactoryInfo>& PGS::NodeGraph::Evaluator::getNodeFactories() const
+{
+    return m_nodeFactories;
+}
+
+
+void PGS::NodeGraph::Evaluator::addObserver(EvaluatorObserver* observer)
+{
+    m_observers.push_back(observer);
+}
+
+void PGS::NodeGraph::Evaluator::removeObserver(EvaluatorObserver* observer)
+{
+    m_observers.erase(std::remove(m_observers.begin(), m_observers.end(), observer), m_observers.end());
+}
+
+
 PGS::NodeGraph::NodeData PGS::NodeGraph::Evaluator::evaluate(const NodeID nodeId, const PortID& portId, const sf::Vector2u& bufferSize)
 {
+    // Check for cache
     if (m_dirtyFlags.count(nodeId) && m_dirtyFlags.at(nodeId) == false)
     {
         if (auto const nodeCacheIt = m_nodeCaches.find(nodeId); nodeCacheIt != m_nodeCaches.end())
             if (const auto portCacheIt = nodeCacheIt->second.find(portId); portCacheIt != nodeCacheIt->second.end())
-                return portCacheIt->second;
+            {
+                // Check for cache validity
+                NodeData cachedData = portCacheIt->second;
+
+                if (const auto pixelBuffer = std::get_if<std::shared_ptr<PixelBuffer>>(&cachedData))
+                {
+                    if ((*pixelBuffer)->getSize() == bufferSize)
+                    {
+                        return cachedData;
+                    }
+                }
+                else if (const auto grayscaleBuffer = std::get_if<std::shared_ptr<GrayscaleBuffer>>(&cachedData))
+                {
+                    if ((*grayscaleBuffer)->getSize() == bufferSize)
+                    {
+                        return cachedData;
+                    }
+                }
+                else if (const auto vectorFieldBuffer = std::get_if<std::shared_ptr<VectorFieldBuffer>>(&cachedData))
+                {
+                    if ((*vectorFieldBuffer)->getSize() == bufferSize)
+                    {
+                        return cachedData;
+                    }
+                }
+                else // float, etc.
+                {
+                    return cachedData;
+                }
+            }
     }
 
     const auto nodeIt = m_nodes.find(nodeId);
@@ -268,4 +378,41 @@ PGS::NodeGraph::NodeData PGS::NodeGraph::Evaluator::evaluate(const NodeID nodeId
     buffer->clear();
 
     return buffer;
+}
+
+std::shared_ptr<PGS::PixelBuffer> PGS::NodeGraph::Evaluator::evaluateFinalOutput(const sf::Vector2u& bufferSize)
+{
+    Connection const* targetConnection = nullptr;
+
+    for (const auto& [nodeId, outputNodePtr] : m_outputNodes)
+    {
+        const PortID inputPortId = "in_color";
+        InputPortLocator locator{nodeId, inputPortId};
+
+        if (auto it = m_inputConnections.find(locator); it != m_inputConnections.end())
+        {
+            targetConnection = &it->second;
+            break;
+        }
+    }
+
+    if (!targetConnection)
+        return nullptr;
+
+    NodeData resultData = evaluate(
+        targetConnection->sourceNodeId,
+        targetConnection->sourcePortId,
+        bufferSize
+    );
+
+    auto finalBufferOpt = getConvertedNodeData<std::shared_ptr<PixelBuffer>>(resultData, bufferSize,
+        [&](){
+            auto fallbackBuffer = std::make_shared<PixelBuffer>(bufferSize);
+            fallbackBuffer->clear(sf::Color::Black);
+
+            return fallbackBuffer;
+        }
+    );
+
+    return finalBufferOpt.value();
 }

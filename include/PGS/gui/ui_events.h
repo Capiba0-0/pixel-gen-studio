@@ -4,6 +4,7 @@
 #include <SFML/Graphics/Color.hpp>
 
 #include <functional>
+#include <memory>
 #include <variant>
 
 namespace PGS
@@ -43,10 +44,7 @@ struct RequestModal
 	Gui::Widget* targetWidget;
 };
 
-struct ApplyGeneratorReq
-{
-	std::function<void(PixelBuffer&)> command;
-};
+struct RequestQuit {};
 
 // UIEvent
 // - Note: it must be in the end of this file.
@@ -55,7 +53,7 @@ using UIEvent = std::variant<
 	CloseWidget,
 	RequestFocus,
 	RequestModal,
-	ApplyGeneratorReq
+	RequestQuit
 >;
 
 } // namespace PGS::events

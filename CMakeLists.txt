@@ -39,14 +39,20 @@ add_executable(${PROJECT_NAME} # TODO: Split the .cpp connection into smaller CM
     src/gui/widgets/about_window.cpp
     src/gui/widgets/menu_bar.cpp
     src/gui/widgets/new_canvas_window.cpp
+        src/gui/node_editor/node_editor_widget.cpp
     src/gui/canvas.cpp
     src/gui/imgui_setup.cpp
     src/nodegraph/node.cpp
     src/nodegraph/evaluator.cpp
-    src/nodegraph/nodes/checker_pattern.cpp
+        src/nodegraph/nodes/checker_pattern_node.cpp
     ${IMGUI_SOURCES} 
     ${IMGUI_SFML_SOURCES}
     ${IMGUI_IMNODES_SOURCES}
+        src/gui/node_editor/node_editor_state.cpp
+        src/gui/node_editor/node_editor_renderer.cpp
+        src/gui/node_editor/input/commands.cpp
+        src/gui/node_editor/input/node_editor_input_handler.cpp
+        src/nodegraph/nodes/texture_output_node.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE SFML::Graphics SFML::Window SFML::System)

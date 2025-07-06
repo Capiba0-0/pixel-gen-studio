@@ -7,6 +7,7 @@ namespace PGS::NodeGraph
 
 class CheckerPatternNode final : public Node
 {
+public:
     CheckerPatternNode(NodeID id, std::string name);
 
     std::unordered_map<PortID, NodeData> calculate(

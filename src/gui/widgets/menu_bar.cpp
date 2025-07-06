@@ -5,6 +5,7 @@
 #include "imgui.h"
 #include "imgui-SFML.h"
 #include "PGS/gui/widgets/about_window.h"
+#include "PGS/gui/widgets/about_window.h"
 #include "PGS/gui/widgets/new_canvas_window.h"
 
 PGS::Gui::MenuBar::MenuBar(const sf::Texture& icon)
@@ -39,19 +40,22 @@ void PGS::Gui::MenuBar::renderContent(UIContext& context)
             if (ImGui::MenuItem("New", "Ctrl+N")) {
                 context.uiManager.createWidget(typeid(NewCanvasWindow));
             }
-            if (ImGui::MenuItem("Open", "Ctrl+O")) {}
-            if (ImGui::MenuItem("Save", "Ctrl+S")) {}
-            if (ImGui::MenuItem("Exit", "Ctrl+Q")) {}
+            // if (ImGui::MenuItem("Open", "Ctrl+O")) {}
+            // if (ImGui::MenuItem("Save", "Ctrl+S")) {}
+            if (ImGui::MenuItem("Quit", "Ctrl+Q"))
+            {
+                context.emit(Events::RequestQuit{});
+            }
 
             ImGui::EndMenu();
         }
 
-        if (ImGui::BeginMenu("Edit")) {
-            if (ImGui::MenuItem("Undo", "Ctrl+Z")) {}
-            if (ImGui::MenuItem("Redo", "Ctrl+Y")) {}
-
-            ImGui::EndMenu();
-        }
+        // if (ImGui::BeginMenu("Edit")) {
+        //     if (ImGui::MenuItem("Undo", "Ctrl+Z")) {}
+        //     if (ImGui::MenuItem("Redo", "Ctrl+Y")) {}
+        //
+        //     ImGui::EndMenu();
+        // }
 
         if (ImGui::BeginMenu("Window")) {
 

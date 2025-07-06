@@ -15,6 +15,7 @@
 #include <vector>
 
 #include "managers/document_manager.h"
+#include "../gui/node_editor/node_editor_widget.h"
 
 namespace PGS
 {
@@ -32,12 +33,14 @@ private:
 	DocumentManager m_documentManager;
 	Gui::UIManager m_uiManager;
 
+	NodeGraph::Evaluator m_evaluator;
+
 	std::vector<Events::UIEvent> m_eventQueue;
 
 	// --- Private Methods ---
 
 	void processAppEvent(const Events::UIEvent& uiEvent);
-	void processSystemEvent();
+	void processSystemEvent(Gui::UIContext& context);
 public:
 	// --- Constructors - Destructor ---
 	Application();
@@ -51,9 +54,7 @@ public:
 	// --- Methods ---
 	void run();
 
-	void undo();
-	void redo();
-	void exit();
+	void quitWindow();
 };
 
 } // namespace PGS
