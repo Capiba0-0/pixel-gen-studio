@@ -225,7 +225,7 @@ namespace PGS::NodeGraph
     template <typename T>
     T getRequiredInput(const std::unordered_map<PortID, NodeData>& inputs, const PortID& portId, const sf::Vector2u& bufferSize)
     {
-        auto it = inputs.find(portId);
+        const auto it = inputs.find(portId);
         if (it == inputs.end())
         {
             throw std::runtime_error("FATAL ERROR: Required input data for port '" + portId + "' was not provided by the evaluator.");

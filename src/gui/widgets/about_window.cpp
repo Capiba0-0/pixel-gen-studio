@@ -17,7 +17,7 @@ void PGS::Gui::AboutWindow::renderContent(UIContext& context)
 	ImGui::SetNextWindowSize(ImVec2{ WINDOW_WIDTH,WINDOW_HEIGHT });
 	const ImGuiViewport* viewport = ImGui::GetMainViewport();
 	ImGui::SetNextWindowPos(ImVec2{ (viewport->WorkSize.x - WINDOW_WIDTH) / 2,
-							   (viewport->WorkSize.y - WINDOW_HEIGHT) / 2 });
+							   (viewport->WorkSize.y - WINDOW_HEIGHT) / 2 + viewport->WorkPos.y});
 
 
 	ImGui::Begin("About Window", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
@@ -46,6 +46,8 @@ void PGS::Gui::AboutWindow::renderContent(UIContext& context)
 	ImGui::BulletText("C++17");
 	ImGui::BulletText("SFML:"); ImGui::SameLine(); ImGui::TextLinkOpenURL("www.sfml-dev.org", "https://www.sfml-dev.org");
 	ImGui::BulletText("Dear ImGui:"); ImGui::SameLine(); ImGui::TextLinkOpenURL("github.com/ocornut/imgui", "https://github.com/ocornut/imgui");
+	ImGui::BulletText("imgui-sfml:"); ImGui::SameLine(); ImGui::TextLinkOpenURL("github.com/SFML/imgui-sfml", "https://github.com/SFML/imgui-sfml");
+	ImGui::BulletText("imnodes:"); ImGui::SameLine(); ImGui::TextLinkOpenURL("github.com/Nelarius/imnodes", "https://github.com/Nelarius/imnodes");
 	ImGui::Spacing();
 	// License
 	ImGui::Separator();

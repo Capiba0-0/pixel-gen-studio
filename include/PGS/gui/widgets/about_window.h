@@ -16,8 +16,8 @@ public:
 	void renderContent(UIContext& context) override;
 
 private:
-	static constexpr unsigned int WINDOW_WIDTH = 354;
-	static constexpr unsigned int WINDOW_HEIGHT = 362;
+	static constexpr unsigned int WINDOW_WIDTH = 378;
+	static constexpr unsigned int WINDOW_HEIGHT = 400;
 
 	const sf::Texture& m_icon;
 };

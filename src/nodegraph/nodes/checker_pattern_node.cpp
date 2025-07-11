@@ -21,34 +21,34 @@ PGS::NodeGraph::CheckerPatternNode::CheckerPatternNode(const NodeID id, std::str
         .id = "in_color1",
         .name = "Color1",
         .type = DataType::Color,
-        .value = sf::Color::White,
+        .value = sf::Color::White
     });
 
     registerInputPort({
         .id = "in_color2",
         .name = "Color2",
         .type = DataType::Color,
-        .value = sf::Color::Black,
+        .value = sf::Color::Black
     });
 
     registerInputPort({
         .id = "in_scale",
         .name = "Scale",
         .type = DataType::Number,
-        .value = 1,
+        .value = 1
     });
 
     // Output
     registerOutputPort({
         .id = "out_color",
         .name = "Color",
-        .type = DataType::Color,
+        .type = DataType::Color
     });
 
     registerOutputPort({
         .id = "out_grayscale",
         .name = "Grayscale",
-        .type = DataType::Grayscale,
+        .type = DataType::Grayscale
     });
 }
 
@@ -65,7 +65,7 @@ std::unordered_map<PGS::NodeGraph::PortID, PGS::NodeGraph::NodeData> PGS::NodeGr
 
     const auto firstColor = getRequiredInput<std::shared_ptr<PixelBuffer>>(inputs, "in_color1", bufferSize);
     const auto secondColor = getRequiredInput<std::shared_ptr<PixelBuffer>>(inputs, "in_color2", bufferSize);
-    const auto scale = getRequiredInput<float>(inputs, "in_scale", bufferSize);
+    const auto scale = static_cast<int>(getRequiredInput<float>(inputs, "in_scale", bufferSize));
 
     // Main algorithm
     sf::Color finalColor;
@@ -83,8 +83,8 @@ std::unordered_map<PGS::NodeGraph::PortID, PGS::NodeGraph::NodeData> PGS::NodeGr
                 distortedY += static_cast<int>(vecDistortion.y);
             }
 
-            const int cellX = std::floor(static_cast<float>(distortedX) / scale);
-            const int cellY = std::floor(static_cast<float>(distortedY) / scale);
+            const int cellX = std::floor(static_cast<float>(distortedX) / static_cast<float>(scale));
+            const int cellY = std::floor(static_cast<float>(distortedY) / static_cast<float>(scale));
 
             if ((cellX + cellY) % 2 == 0)
             {

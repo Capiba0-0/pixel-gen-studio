@@ -1,20 +1,28 @@
 #include "PGS/nodegraph/evaluator.h"
 
-#include "PGS/nodegraph/node.h"
 #include "PGS/nodegraph/types.h"
 #include "PGS/core/buffers/pixel_buffer.h"
 #include "PGS/nodegraph/evaluator_observer.h"
+
+#include "PGS/nodegraph/node.h"
 #include "PGS/nodegraph/nodes/checker_pattern_node.h"
 #include "PGS/nodegraph/nodes/texture_output_node.h"
+#include "PGS/nodegraph/nodes/circle_pattern_node.h"
+#include "PGS/nodegraph/nodes/noise_texture_node.h"
 
 #include <algorithm>
 #include <cassert>
+
+#include "PGS/nodegraph/nodes/rectangle_pattern_node.h"
 
 // -- Constructor --
 PGS::NodeGraph::Evaluator::Evaluator()
 {
     registerNode<CheckerPatternNode>("Checker Texture");
     registerNode<TextureOutputNode>("Texture Output");
+    registerNode<CirclePatternNode>("Circle");
+    registerNode<RectanglePatternNode>("Rectangle");
+    registerNode<NoiseTextureNode>("Noise Texture");
 
     addNode(typeid(TextureOutputNode));
 }
