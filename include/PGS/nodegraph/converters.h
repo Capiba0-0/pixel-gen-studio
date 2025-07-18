@@ -5,6 +5,7 @@
 #include "PGS/core/buffers/vector_field_buffer.h"
 #include <memory>
 #include <algorithm>
+#include <cmath>
 
 namespace PGS::NodeGraph::Converters
 {
@@ -19,7 +20,9 @@ namespace PGS::NodeGraph::Converters
             for (unsigned int x = 0; x < size.x; ++x) {
                 const sf::Color color = pixelBuffer->getPixel({x, y});
 
-                const float luminance = 0.299f * color.r + 0.587f * color.g + 0.114f * color.b;
+                const float luminance = 0.299f * static_cast<float>(color.r) +
+                                        0.587f * static_cast<float>(color.g) +
+                                        0.114f * static_cast<float>(color.b);
                 grayscaleBuffer->setValue({x, y}, static_cast<uint8_t>(luminance));
             }
         }
@@ -117,6 +120,28 @@ namespace PGS::NodeGraph::Converters
         }
 
         return static_cast<float>(sum) / static_cast<float>(totalPixels) / 255.f;
+    }
+
+    inline sf::Color hsvToRgb(float h, const float s, const float v) {
+        h = std::fmod(h, 1.0f);
+        if (h < 0) h += 1.0f;
+
+        const int i = static_cast<int>(h * 6);
+        const float f = h * 6 - static_cast<float>(i);
+        const float p = v * (1 - s);
+        const float q = v * (1 - f * s);
+        const float t = v * (1 - (1 - f) * s);
+
+        switch (i % 6) {
+            case 0: return {static_cast<uint8_t>(v * 255), static_cast<uint8_t>(t * 255), static_cast<uint8_t>(p * 255)};
+            case 1: return {static_cast<uint8_t>(q * 255), static_cast<uint8_t>(v * 255), static_cast<uint8_t>(p * 255)};
+            case 2: return {static_cast<uint8_t>(p * 255), static_cast<uint8_t>(v * 255), static_cast<uint8_t>(t * 255)};
+            case 3: return {static_cast<uint8_t>(p * 255), static_cast<uint8_t>(q * 255), static_cast<uint8_t>(v * 255)};
+            case 4: return {static_cast<uint8_t>(t * 255), static_cast<uint8_t>(p * 255), static_cast<uint8_t>(v * 255)};
+            case 5: return {static_cast<uint8_t>(v * 255), static_cast<uint8_t>(p * 255), static_cast<uint8_t>(q * 255)};
+
+            default: return sf::Color::Black;
+        }
     }
 
 } // namespace PGS::NodeGraph::Converters

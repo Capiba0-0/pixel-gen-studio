@@ -55,6 +55,8 @@ add_executable(${PROJECT_NAME} # TODO: Split the .cpp connection into smaller CM
     src/nodegraph/nodes/texture_output_node.cpp
     src/nodegraph/nodes/circle_pattern_node.cpp
     src/nodegraph/nodes/rectangle_pattern_node.cpp
+    src/nodegraph/nodes/noise_texture_node.cpp
+    src/nodegraph/utils/perlin_noise_2d.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE SFML::Graphics SFML::Window SFML::System)
