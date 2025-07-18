@@ -9,6 +9,8 @@
 #include "PGS/nodegraph/nodes/texture_output_node.h"
 #include "PGS/nodegraph/nodes/circle_pattern_node.h"
 #include "PGS/nodegraph/nodes/noise_texture_node.h"
+#include "PGS/nodegraph/nodes/value_node.h"
+#include "PGS/nodegraph/nodes/rgb_node.h"
 
 #include <algorithm>
 #include <cassert>
@@ -18,11 +20,16 @@
 // -- Constructor --
 PGS::NodeGraph::Evaluator::Evaluator()
 {
-    registerNode<CheckerPatternNode>("Checker Texture");
     registerNode<TextureOutputNode>("Texture Output");
+
+    registerNode<CheckerPatternNode>("Checker Texture");
+    registerNode<NoiseTextureNode>("Noise Texture");
+
     registerNode<CirclePatternNode>("Circle");
     registerNode<RectanglePatternNode>("Rectangle");
-    registerNode<NoiseTextureNode>("Noise Texture");
+
+    registerNode<ValueNode>("Value");
+    registerNode<RGBNode>("RGB");
 
     addNode(typeid(TextureOutputNode));
 }
