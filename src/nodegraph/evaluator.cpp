@@ -59,10 +59,10 @@ void PGS::NodeGraph::Evaluator::propagateDirtyFlag(const NodeID nodeId)
     if (nodeIt == m_nodes.end())
         return;
 
-    auto outputPorts = nodeIt->second->getOutputPorts();
-    for (const auto& [portId, port] : outputPorts)
+    const auto outputPorts = nodeIt->second->getOutputPorts();
+    for (const auto& outputPort : outputPorts)
     {
-        OutputPortLocator outputPortLocator{nodeId, portId};
+        OutputPortLocator outputPortLocator{nodeId, outputPort.id};
 
         auto connectionIt = m_outputConnections.find(outputPortLocator);
         if (connectionIt == m_outputConnections.end())
@@ -86,10 +86,8 @@ bool PGS::NodeGraph::Evaluator::checkForCycle(const NodeID sourceNode, const Nod
 
     auto inputPorts = node->second->getInputPorts();
 
-    return std::any_of(inputPorts.begin(), inputPorts.end(), [&](const auto& portPair)
+    return std::any_of(inputPorts.begin(), inputPorts.end(), [&](const auto& port)
     {
-        const auto& port = portPair.second;
-
         const auto inputIt = m_inputConnections.find({sourceNode, port.id});
         if (inputIt == m_inputConnections.end())
             return false;
@@ -187,18 +185,18 @@ void PGS::NodeGraph::Evaluator::deleteNode(const NodeID& nodeId)
         return;
 
     auto inputPorts = nodeIt->second->getInputPorts();
-    for (const auto& [portId, port] : inputPorts)
+    for (const auto& inputPort : inputPorts)
     {
-        auto connectionIt = m_inputConnections.find({nodeId, portId});
+        auto connectionIt = m_inputConnections.find({nodeId, inputPort.id});
         if (connectionIt == m_inputConnections.end())
             continue;
 
         deleteConnection(connectionIt->second);
     }
     auto outputPorts = nodeIt->second->getOutputPorts();
-    for (const auto& [portId, port] : outputPorts)
+    for (const auto& outputPort : outputPorts)
     {
-        auto connectionIt = m_outputConnections.find({nodeId, portId});
+        auto connectionIt = m_outputConnections.find({nodeId, outputPort.id});
         if (connectionIt == m_outputConnections.end())
             continue;
 
@@ -232,13 +230,8 @@ void PGS::NodeGraph::Evaluator::addConnection(const Connection& connection)
     if (sourceNode == m_nodes.end() || targetNode == m_nodes.end())
         return;
 
-    // TODO: Currently, you can only connect in the following sequences: `outPort` -> `inPort`,
-    //       it is necessary to make it possible to connect in the reverse order
-    const auto& sourcePorts = sourceNode->second->getOutputPorts();
-    const auto& targetPorts = targetNode->second->getInputPorts();
-
-    if (sourcePorts.find(connection.sourcePortId) == sourcePorts.end() ||
-        targetPorts.find(connection.targetPortId) == targetPorts.end())
+    if (!sourceNode->second->isPort(connection.sourcePortId) ||
+        !targetNode->second->isPort(connection.targetPortId))
         return;
 
     // Check for types
@@ -357,22 +350,22 @@ PGS::NodeGraph::NodeData PGS::NodeGraph::Evaluator::evaluate(const NodeID nodeId
 
     std::unordered_map<PortID, NodeData> inputs;
 
-    auto inputPorts = nodeIt->second->getInputPorts();
-    for (const auto& [inputPortId, port] : inputPorts)
+    const auto inputPorts = nodeIt->second->getInputPorts();
+    for (const auto& inputPort : inputPorts)
     {
-        auto inputIt = m_inputConnections.find({nodeId, inputPortId});
+        auto inputIt = m_inputConnections.find({nodeId, inputPort.id});
         if (inputIt != m_inputConnections.end())
         {
-            inputs[inputPortId] = evaluate(inputIt->second.sourceNodeId, inputIt->second.sourcePortId, bufferSize);
+            inputs[inputPort.id] = evaluate(inputIt->second.sourceNodeId, inputIt->second.sourcePortId, bufferSize);
         }
         else
         {
             const auto& sourceNode = m_nodes.at(nodeId);
 
-            if (sourceNode->getInputPort(inputPortId).value.has_value())
+            if (sourceNode->getInputPort(inputPort.id).value.has_value())
             {
-                inputs[inputPortId] = convertValueToNodeData(
-                sourceNode->getInputPort(inputPortId).value.value(),
+                inputs[inputPort.id] = convertValueToNodeData(
+                sourceNode->getInputPort(inputPort.id).value.value(),
                 bufferSize);
             }
         }

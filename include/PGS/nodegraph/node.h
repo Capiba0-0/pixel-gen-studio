@@ -5,6 +5,7 @@
 #include <SFML/System/Vector2.hpp>
 
 #include <string>
+#include <vector>
 #include <unordered_map>
 
 namespace PGS::NodeGraph
@@ -17,8 +18,8 @@ private:
     std::string m_name;
 
     // TODO: It may be better to keep std::vector to maintain order
-    std::unordered_map<PortID, InputPort> m_inputPorts;
-    std::unordered_map<PortID, OutputPort> m_outputPorts;
+    std::vector<InputPort> m_inputPorts;
+    std::vector<OutputPort> m_outputPorts;
 
 public:
     // -- Constructors | Destructor --
@@ -30,13 +31,15 @@ public:
     Node& operator=(const Node&) = delete;
 
     // -- Getters --
-    NodeID getID() const;
-    const std::string& getName() const;
+    [[nodiscard]] NodeID getID() const;
+    [[nodiscard]] const std::string& getName() const;
 
-    const InputPort& getInputPort(const PortID& id) const;
-    const OutputPort& getOutputPort(const PortID& id) const;
-    const std::unordered_map<PortID, InputPort>& getInputPorts() const;
-    const std::unordered_map<PortID, OutputPort>& getOutputPorts() const;
+    [[nodiscard]] const InputPort& getInputPort(const PortID& id) const;
+    [[nodiscard]] const OutputPort& getOutputPort(const PortID& id) const;
+    [[nodiscard]] const std::vector<InputPort>& getInputPorts() const;
+    [[nodiscard]] const std::vector<OutputPort>& getOutputPorts() const;
+
+    [[nodiscard]] bool isPort(const PortID& id) const;
 
     // -- Setters --
     void setName(std::string name);
@@ -61,16 +64,15 @@ protected:
 template <typename T>
 void PGS::NodeGraph::Node::setInputPortValue(const PortID& id, T value)
 {
-    if (const auto it = m_inputPorts.find(id); it != m_inputPorts.end())
+    for (auto& inputPort : m_inputPorts)
     {
-        it->second.value = value;
+        if (inputPort.id == id)
+            inputPort.value = value;
     }
 }
 
 template <typename T>
 T PGS::NodeGraph::Node::getInputPortValue(const PortID& id) const
 {
-    const auto it = m_inputPorts.find(id);
-    assert(it != m_inputPorts.end() && "Input port with this ID not found!");
-    return std::get<T>(it->second.value);
+    return std::get<T>(getInputPort(id).value);
 }

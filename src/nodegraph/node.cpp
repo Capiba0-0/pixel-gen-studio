@@ -1,5 +1,6 @@
 #include "PGS/nodegraph/node.h"
 
+#include <any>
 #include <utility>
 
 // -- Constructors | Destructor --
@@ -21,22 +22,44 @@ const std::string& PGS::NodeGraph::Node::getName() const
 
 const PGS::NodeGraph::InputPort& PGS::NodeGraph::Node::getInputPort(const PortID& id) const
 {
-    return m_inputPorts.at(id);
+    for (const auto& inputPort : m_inputPorts)
+    {
+        if (inputPort.id == id)
+            return inputPort;
+    }
+
+    assert(false && "The entered input port ID is not valid");
 }
 
 const PGS::NodeGraph::OutputPort& PGS::NodeGraph::Node::getOutputPort(const PortID& id) const
 {
-    return m_outputPorts.at(id);
+    for (const auto& outputPort : m_outputPorts)
+    {
+        if (outputPort.id == id)
+            return outputPort;
+    }
+
+    assert(false && "The entered output port ID is not valid");
 }
 
-const std::unordered_map<PGS::NodeGraph::PortID, PGS::NodeGraph::InputPort>& PGS::NodeGraph::Node::getInputPorts() const
+const std::vector<PGS::NodeGraph::InputPort>& PGS::NodeGraph::Node::getInputPorts() const
 {
     return m_inputPorts;
 }
 
-const std::unordered_map<PGS::NodeGraph::PortID, PGS::NodeGraph::OutputPort>& PGS::NodeGraph::Node::getOutputPorts() const
+const std::vector<PGS::NodeGraph::OutputPort>& PGS::NodeGraph::Node::getOutputPorts() const
 {
     return m_outputPorts;
+}
+
+bool PGS::NodeGraph::Node::isPort(const PortID& id) const
+{
+    return
+        std::any_of(m_outputPorts.begin(), m_outputPorts.end(),
+                   [&](const auto& outputPort) { return outputPort.id == id; }) ||
+
+        std::any_of(m_inputPorts.begin(), m_inputPorts.end(),
+                   [&](const auto& inputPort) { return inputPort.id == id; });
 }
 
 
@@ -49,10 +72,10 @@ void PGS::NodeGraph::Node::setName(std::string name)
 // -- Protected Methods --
 void PGS::NodeGraph::Node::registerInputPort(InputPort port)
 {
-    m_inputPorts[port.id] = std::move(port);
+    m_inputPorts.push_back(std::move(port));
 }
 
 void PGS::NodeGraph::Node::registerOutputPort(OutputPort port)
 {
-    m_outputPorts[port.id] = std::move(port);
+    m_outputPorts.push_back(std::move(port));
 }

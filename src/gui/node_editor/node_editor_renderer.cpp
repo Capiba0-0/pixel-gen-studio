@@ -22,9 +22,9 @@ void PGS::Gui::NodeEditorRenderer::renderNodes(const UIContext& context, const N
 
         ImGui::Dummy({NODE_SIZE_X, 0});
 
-        for (const auto& [outputPortId, outputPort] : node->getOutputPorts())
+        for (const auto& outputPort : node->getOutputPorts())
         {
-            ImNodes::BeginOutputAttribute(state.getIntPortID(NodeGraph::OutputPortLocator{nodeId, outputPortId}));
+            ImNodes::BeginOutputAttribute(state.getIntPortID(NodeGraph::OutputPortLocator{nodeId, outputPort.id}));
 
             const float textWidth = ImGui::CalcTextSize(outputPort.name.c_str()).x;
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + NODE_SIZE_X - textWidth);
@@ -33,13 +33,13 @@ void PGS::Gui::NodeEditorRenderer::renderNodes(const UIContext& context, const N
 
             ImNodes::EndOutputAttribute();
         }
-        for (auto& [inputPortId, inputPort] : node->getInputPorts())
+        for (auto& inputPort : node->getInputPorts())
         {
-            ImNodes::BeginInputAttribute(state.getIntPortID(NodeGraph::InputPortLocator{nodeId, inputPortId}));
+            ImNodes::BeginInputAttribute(state.getIntPortID(NodeGraph::InputPortLocator{nodeId, inputPort.id}));
 
             if (inputPort.value.has_value())
             {
-                auto it = context.evaluator.getConnections().find(NodeGraph::InputPortLocator{nodeId, inputPortId});
+                auto it = context.evaluator.getConnections().find(NodeGraph::InputPortLocator{nodeId, inputPort.id});
                 if (it == context.evaluator.getConnections().end())
                 {
                     std::visit([&](auto&& arg)
@@ -53,7 +53,7 @@ void PGS::Gui::NodeEditorRenderer::renderNodes(const UIContext& context, const N
                             ImGui::SetNextItemWidth(NODE_SIZE_X - ImGui::CalcTextSize(inputPort.name.c_str()).x);
                             if (ImGui::DragFloat(inputPort.name.c_str(), &value, 0.1,
                                 inputPort.metadata.minValue, inputPort.metadata.maxValue))
-                                context.evaluator.setNodeInputPortValue(nodeId, inputPortId, value);
+                                context.evaluator.setNodeInputPortValue(nodeId, inputPort.id, value);
                         }
 
                         else if constexpr (std::is_same_v<T, int>)
@@ -61,13 +61,13 @@ void PGS::Gui::NodeEditorRenderer::renderNodes(const UIContext& context, const N
                             ImGui::SetNextItemWidth(NODE_SIZE_X - ImGui::CalcTextSize(inputPort.name.c_str()).x);
                             if (ImGui::DragInt(inputPort.name.c_str(), &value, 0.05,
                                 inputPort.metadata.minValue, inputPort.metadata.maxValue))
-                                context.evaluator.setNodeInputPortValue(nodeId, inputPortId, value);
+                                context.evaluator.setNodeInputPortValue(nodeId, inputPort.id, value);
                         }
 
                         else if constexpr (std::is_same_v<T, bool>)
                         {
                             if (ImGui::Checkbox(inputPort.name.c_str(), &value))
-                                context.evaluator.setNodeInputPortValue(nodeId, inputPortId, value);
+                                context.evaluator.setNodeInputPortValue(nodeId, inputPort.id, value);
                         }
 
                         else if constexpr (std::is_same_v<T, sf::Color>)
@@ -85,7 +85,7 @@ void PGS::Gui::NodeEditorRenderer::renderNodes(const UIContext& context, const N
                                 value.b = static_cast<std::uint8_t>(color[2] * 255.f);
                                 value.a = static_cast<std::uint8_t>(color[3] * 255.f);
 
-                                context.evaluator.setNodeInputPortValue(nodeId, inputPortId, value);
+                                context.evaluator.setNodeInputPortValue(nodeId, inputPort.id, value);
                             }
                         }
 

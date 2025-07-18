@@ -117,14 +117,14 @@ void PGS::Gui::NodeEditorState::onPortAdded(const NodeGraph::OutputPortLocator& 
 
 void PGS::Gui::NodeEditorState::onNodeAdded(const NodeGraph::NodeID nodeId, const NodeGraph::Node& node)
 {
-    for (const auto& [portId, port] : node.getOutputPorts())
+    for (const auto& outputPort : node.getOutputPorts())
     {
-        onPortAdded(NodeGraph::OutputPortLocator{nodeId, portId});
+        onPortAdded(NodeGraph::OutputPortLocator{nodeId, outputPort.id});
     }
 
-    for (const auto& [portId, port] : node.getInputPorts())
+    for (const auto& inputPort : node.getInputPorts())
     {
-        onPortAdded(NodeGraph::InputPortLocator{nodeId, portId});
+        onPortAdded(NodeGraph::InputPortLocator{nodeId, inputPort.id});
     }
 }
 
