@@ -5,6 +5,7 @@
 #include "PGS/gui/node_editor/node_editor_state.h"
 #include "PGS/gui/node_editor/input/commands.h"
 #include "PGS/gui/node_editor/input/node_editor_input_handler.h"
+#include "PGS/nodegraph/types.h"
 
 #include "imnodes.h"
 
@@ -86,6 +87,19 @@ void PGS::Gui::NodeEditorRenderer::renderNodes(const UIContext& context, const N
                                 value.a = static_cast<std::uint8_t>(color[3] * 255.f);
 
                                 context.evaluator.setNodeInputPortValue(nodeId, inputPort.id, value);
+                            }
+                        }
+
+                        else if constexpr (std::is_same_v<T, NodeGraph::ValueList>)
+                        {
+                            int index = 0;
+
+                            ImGui::SetNextItemWidth(NODE_SIZE_X - ImGui::CalcTextSize(inputPort.name.c_str()).x);
+
+                            if (ImGui::Combo(inputPort.name.c_str(), &value.first, value.second.data(), value.second.size()))
+                            {
+                                index = value.first;
+                                context.evaluator.setNodeInputPortValue<NodeGraph::ValueList>(nodeId, inputPort.id, {index, value.second});
                             }
                         }
 

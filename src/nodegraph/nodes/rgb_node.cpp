@@ -1,7 +1,5 @@
 #include "PGS/nodegraph/nodes/rgb_node.h"
 
-#include <memory>
-
 PGS::NodeGraph::RGBNode::RGBNode(const NodeID id, std::string name)
     : Node(id, std::move(name))
 {

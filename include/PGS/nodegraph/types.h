@@ -1,12 +1,11 @@
 #pragma once
 
-#include <functional>
-
 #include "PGS/nodegraph/converters.h"
 
 #include <SFML/Graphics/Color.hpp>
 #include <SFML/System/Vector2.hpp>
 
+#include <array>
 #include <variant>
 #include <memory>
 #include <string>
@@ -14,6 +13,7 @@
 #include <stdexcept>
 #include <unordered_map>
 #include <type_traits>
+#include <functional>
 
 // Declaration
 namespace PGS
@@ -29,7 +29,9 @@ namespace PGS::NodeGraph
     using NodeID = size_t;
     using PortID = std::string;
 
-    using InputPortValue = std::variant<float, int, bool, sf::Color>;
+    using ValueList = std::pair<int, std::vector<const char*>>;
+
+    using InputPortValue = std::variant<float, int, bool, sf::Color, ValueList>;
 
     inline constexpr NodeID INVALID_NODE_ID = 0;
 

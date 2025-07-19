@@ -1,6 +1,5 @@
 #include "PGS/nodegraph/node.h"
 
-#include <any>
 #include <utility>
 
 // -- Constructors | Destructor --

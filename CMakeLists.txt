@@ -78,6 +78,7 @@ add_executable(${PROJECT_NAME} # TODO: Split the .cpp connection into smaller CM
     ${IMGUI_IMNODES_SOURCES}
         src/nodegraph/nodes/value_node.cpp
         src/nodegraph/nodes/rgb_node.cpp
+        src/nodegraph/nodes/math_node.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE SFML::Graphics SFML::Window SFML::System)

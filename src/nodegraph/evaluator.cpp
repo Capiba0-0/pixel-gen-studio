@@ -11,6 +11,7 @@
 #include "PGS/nodegraph/nodes/noise_texture_node.h"
 #include "PGS/nodegraph/nodes/value_node.h"
 #include "PGS/nodegraph/nodes/rgb_node.h"
+#include "PGS/nodegraph/nodes/math_node.h"
 
 #include <algorithm>
 #include <cassert>
@@ -30,6 +31,8 @@ PGS::NodeGraph::Evaluator::Evaluator()
 
     registerNode<ValueNode>("Value");
     registerNode<RGBNode>("RGB");
+
+    registerNode<MathNode>("Math");
 
     addNode(typeid(TextureOutputNode));
 }
@@ -120,6 +123,12 @@ PGS::NodeGraph::NodeData PGS::NodeGraph::Evaluator::convertValueToNodeData(const
             buffer->clear(argInput);
             return buffer;
         }
+        if constexpr (std::is_same_v<T, ValueList>)
+        {
+            float index = argInput.first;
+            return index;
+        }
+
         assert(false && "Unhandled type in variant!");
     }, value);
 }
