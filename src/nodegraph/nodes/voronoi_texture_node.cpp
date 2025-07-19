@@ -1,5 +1,6 @@
 #include "PGS/nodegraph/nodes/voronoi_texture_node.h"
 
+#include "PGS/nodegraph/helpers.h"
 #include "PGS/nodegraph/converters.h"
 
 #include <random>
@@ -58,9 +59,12 @@ PGS::NodeGraph::VoronoiTextureNode::VoronoiTextureNode(const NodeID id, std::str
 
     registerInputPort({"in_scale", "Scale", DataType::Number, 5.0f});
     registerInputPort({"in_detail", "Detail", DataType::Number, 0.0f});
-    registerInputPort({"in_roughness", "Roughness", DataType::Number, 0.5f});
+    registerInputPort({"in_roughness", "Roughness", DataType::Number, 0.5f,
+        Metadata{.description = "Roughness of the effect", .minValue = 0.0f, .maxValue = 1.0f}});
+
     registerInputPort({"in_lacunarity", "Lacunarity", DataType::Number, 2.0f});
-    registerInputPort({"in_randomness", "Randomness", DataType::Number, 1.0f});
+    registerInputPort({"in_randomness", "Randomness", DataType::Number, 1.0f,
+        Metadata{.description = "Randomness of the effect", .minValue = 0.0f, .maxValue = 1.0f}});
 
     // Output
     registerOutputPort({"out_grayscale", "Distance", DataType::Grayscale});
@@ -70,7 +74,7 @@ PGS::NodeGraph::VoronoiTextureNode::VoronoiTextureNode(const NodeID id, std::str
 std::unordered_map<PGS::NodeGraph::PortID, PGS::NodeGraph::NodeData> PGS::NodeGraph::VoronoiTextureNode::calculate(
     std::unordered_map<PortID, NodeData>& inputs, const sf::Vector2u& bufferSize) const
 {
-    auto outGray = std::make_shared<GrayscaleBuffer>(bufferSize);
+    auto outGrayscale = std::make_shared<GrayscaleBuffer>(bufferSize);
     auto outColor = std::make_shared<PixelBuffer>(bufferSize);
 
     const auto feature = static_cast<int>(getRequiredInput<float>(inputs, "in_feature", bufferSize));
@@ -156,14 +160,14 @@ std::unordered_map<PGS::NodeGraph::PortID, PGS::NodeGraph::NodeData> PGS::NodeGr
 
             const size_t id = closestIDs[index];
 
-            outGray->setValue({x, y}, static_cast<uint8_t>(val * 255));
+            outGrayscale->setValue({x, y}, static_cast<uint8_t>(val * 255));
             outColor->setPixel({x, y}, idToColor(id));
         }
     }
 
     return {
-        {"out_grayscale", outGray},
-        {"out_color", outColor}
+        {"out_grayscale", std::move(outGrayscale)},
+        {"out_color", std::move(outColor)}
     };
 
 }

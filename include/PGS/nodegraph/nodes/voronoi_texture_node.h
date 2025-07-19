@@ -12,7 +12,6 @@ public:
     std::unordered_map<PortID, NodeData> calculate(
         std::unordered_map<PortID, NodeData>& inputs, const sf::Vector2u& bufferSize) const override;
 
-private:
     enum FeatureType {
         F1 = 0,
         F2 = 1,
@@ -24,7 +23,7 @@ private:
         Manhattan = 1,
         Chebyshev = 2
     };
-
+private:
     static float distance(const sf::Vector2f& a, const sf::Vector2f& b, int metric);
 
     static sf::Color idToColor(size_t id);

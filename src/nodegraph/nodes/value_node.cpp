@@ -1,22 +1,15 @@
 #include "PGS/nodegraph/nodes/value_node.h"
 
+#include "PGS/nodegraph/helpers.h"
+
 PGS::NodeGraph::ValueNode::ValueNode(const NodeID id, std::string name)
     : Node(id, std::move(name))
 {
     // Input
-    registerInputPort({
-        .id = "in_value",
-        .name = "",
-        .type = DataType::Number,
-        .value = 0.0f
-    });
+    registerInputPort({ "in_value", "", DataType::Number, 0.0f });
 
     // Output
-    registerOutputPort({
-        .id = "out_value",
-        .name = "Value",
-        .type = DataType::Number
-    });
+    registerOutputPort({ "out_value", "Value", DataType::Number });
 }
 
 std::unordered_map<PGS::NodeGraph::PortID, PGS::NodeGraph::NodeData> PGS::NodeGraph::ValueNode::calculate(

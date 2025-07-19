@@ -1,69 +1,25 @@
 #include "PGS/nodegraph/nodes/rectangle_pattern_node.h"
 
+#include "PGS/nodegraph/helpers.h"
+
 PGS::NodeGraph::RectanglePatternNode::RectanglePatternNode(const NodeID id, std::string name)
     : Node(id, std::move(name))
 {
     // Input
-    registerInputPort({
-        .id = "in_vector",
-        .name = "Vector",
-        .type = DataType::VectorField
-    });
+    registerInputPort({ "in_vector", "Vector", DataType::VectorField });
 
-    registerInputPort({
-        .id = "in_color",
-        .name = "Color",
-        .type = DataType::Color,
-        .value = sf::Color::Black
-    });
+    registerInputPort({ "in_color", "Color", DataType::Color, sf::Color::Black });
 
-    registerInputPort({
-        .id = "in_x",
-        .name = "X",
-        .type = DataType::Number,
-        .value = 0
-    });
+    registerInputPort({ "in_x", "X", DataType::Number, 0 });
+    registerInputPort({ "in_y", "Y", DataType::Number, 0 });
+    registerInputPort({ "in_size_x", "Size X", DataType::Number, 0 });
+    registerInputPort({ "in_size_y", "Size Y", DataType::Number, 0 });
 
-    registerInputPort({
-        .id = "in_y",
-        .name = "Y",
-        .type = DataType::Number,
-        .value = 0
-    });
-
-    registerInputPort({
-        .id = "in_size_x",
-        .name = "Size X",
-        .type = DataType::Number,
-        .value = 0
-    });
-
-    registerInputPort({
-        .id = "in_size_y",
-        .name = "Size Y",
-        .type = DataType::Number,
-        .value = 0
-    });
-
-    registerInputPort({
-        .id = "in_is_filling",
-        .name = "Fill",
-        .type = DataType::Number,
-        .value = false
-    });
+    registerInputPort({ "in_is_filling", "Fill", DataType::Number, false });
 
     // Output
-    registerOutputPort({
-        .id = "out_color",
-        .name = "Color",
-        .type = DataType::Color
-    });
-
-    registerOutputPort({
-        .id = "out_grayscale",
-        .name = "Grayscale",
-        .type = DataType::Grayscale
-    });
+    registerOutputPort({ "out_color", "Color", DataType::Color });
+    registerOutputPort({ "out_grayscale", "Grayscale", DataType::Grayscale });
 }
 
 std::unordered_map<PGS::NodeGraph::PortID, PGS::NodeGraph::NodeData> PGS::NodeGraph::RectanglePatternNode::calculate(std::unordered_map<PortID, NodeData>& inputs, const sf::Vector2u& bufferSize) const
@@ -124,8 +80,6 @@ std::unordered_map<PGS::NodeGraph::PortID, PGS::NodeGraph::NodeData> PGS::NodeGr
         }
     }
 
-    std::unordered_map<PortID, NodeData> results;
-    results["out_color"] = std::move(outColor);
-    results["out_grayscale"] = std::move(outGrayscale);
-    return results;
+    return {{"out_color", std::move(outColor)},
+            {"out_grayscale", std::move(outGrayscale)}};
 }

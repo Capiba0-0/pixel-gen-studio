@@ -1,7 +1,7 @@
 #include "PGS/nodegraph/evaluator.h"
 
 // -- PGS Headers --
-#include "PGS/nodegraph/types.h"
+#include "PGS/nodegraph/helpers.h"
 #include "PGS/core/buffers/pixel_buffer.h"
 #include "PGS/nodegraph/evaluator_observer.h"
 
@@ -18,9 +18,12 @@
 #include "PGS/nodegraph/nodes/rectangle_pattern_node.h"
 //
 #include "PGS/nodegraph/nodes/value_node.h"
-#include "PGS/nodegraph/nodes/rgb_node.h"
-//
 #include "PGS/nodegraph/nodes/math_node.h"
+//
+#include "PGS/nodegraph/nodes/rgb_node.h"
+#include "PGS/nodegraph/nodes/mix_color_node.h"
+#include "PGS/nodegraph/nodes/invert_color_node.h"
+#include "PGS/nodegraph/nodes/hsv_node.h"
 
 // -- STL Headers --
 #include <algorithm>
@@ -39,9 +42,12 @@ PGS::NodeGraph::Evaluator::Evaluator()
     registerNode<RectanglePatternNode>("Rectangle");
 
     registerNode<ValueNode>("Value");
-    registerNode<RGBNode>("RGB");
-
     registerNode<MathNode>("Math");
+
+    registerNode<RGBNode>("RGB");
+    registerNode<MixColorNode>("Mix Color");
+    registerNode<InvertColorNode>("Invert Color");
+    registerNode<HSVNode>("Hue/Saturation/Value");
 
     addNode(typeid(TextureOutputNode));
 }

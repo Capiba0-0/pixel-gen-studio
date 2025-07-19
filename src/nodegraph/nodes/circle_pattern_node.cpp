@@ -1,62 +1,24 @@
 #include "PGS/nodegraph/nodes/circle_pattern_node.h"
 
+#include "PGS/nodegraph/helpers.h"
+
 PGS::NodeGraph::CirclePatternNode::CirclePatternNode(const NodeID id, std::string name)
     : Node(id, std::move(name))
 {
     // Input
-    registerInputPort({
-        .id = "in_vector",
-        .name = "Vector",
-        .type = DataType::VectorField
-    });
+    registerInputPort({ "in_vector", "Vector", DataType::VectorField });
 
-    registerInputPort({
-        .id = "in_color",
-        .name = "Color",
-        .type = DataType::Color,
-        .value = sf::Color::Black
-    });
+    registerInputPort({ "in_color", "Color", DataType::Color, sf::Color::Black });
 
-    registerInputPort({
-        .id = "in_center_x",
-        .name = "Center X",
-        .type = DataType::Number,
-        .value = 0
-    });
+    registerInputPort({ "in_center_x", "Center X", DataType::Number, 0 });
+    registerInputPort({ "in_center_y", "Center Y", DataType::Number, 0 });
+    registerInputPort({ "in_radius", "Radius", DataType::Number, 0 });
 
-    registerInputPort({
-        .id = "in_center_y",
-        .name = "Center Y",
-        .type = DataType::Number,
-        .value = 0
-    });
-
-    registerInputPort({
-        .id = "in_radius",
-        .name = "Radius",
-        .type = DataType::Number,
-        .value = 0
-    });
-
-    registerInputPort({
-        .id = "in_is_filling",
-        .name = "Filling",
-        .type = DataType::Number,
-        .value = false
-    });
+    registerInputPort({ "in_is_filling", "Filling", DataType::Number, false });
 
     // Output
-    registerOutputPort({
-        .id = "out_color",
-        .name = "Color",
-        .type = DataType::Color
-    });
-
-    registerOutputPort({
-        .id = "out_grayscale",
-        .name = "Grayscale",
-        .type = DataType::Grayscale
-    });
+    registerOutputPort({ "out_color", "Color", DataType::Color });
+    registerOutputPort({ "out_grayscale", "Grayscale", DataType::Grayscale });
 }
 
 std::unordered_map<PGS::NodeGraph::PortID, PGS::NodeGraph::NodeData> PGS::NodeGraph::CirclePatternNode::calculate(
@@ -118,8 +80,6 @@ std::unordered_map<PGS::NodeGraph::PortID, PGS::NodeGraph::NodeData> PGS::NodeGr
         }
     }
 
-    std::unordered_map<PortID, NodeData> results;
-    results["out_color"] = std::move(outColor);
-    results["out_grayscale"] = std::move(outGrayscale);
-    return results;
+    return {{"out_color", std::move(outColor)},
+            {"out_grayscale", std::move(outGrayscale)}};
 }

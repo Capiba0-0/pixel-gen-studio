@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <cmath>
 
-PGS::NodeGraph::PerlinNoise2D::PerlinNoise2D(const unsigned int seed) {
+PGS::NodeGraph::Utils::PerlinNoise2D::PerlinNoise2D(const unsigned int seed) {
     permutation.resize(256);
     std::iota(permutation.begin(), permutation.end(), 0);
 
@@ -15,12 +15,12 @@ PGS::NodeGraph::PerlinNoise2D::PerlinNoise2D(const unsigned int seed) {
     permutation.insert(permutation.end(), permutation.begin(), permutation.end());
 }
 
-float PGS::NodeGraph::PerlinNoise2D::getValue(const sf::Vector2f& pos) const {
+float PGS::NodeGraph::Utils::PerlinNoise2D::getValue(const sf::Vector2f& pos) const {
     const int xi = static_cast<int>(std::floor(pos.x)) & 255;
     const int yi = static_cast<int>(std::floor(pos.y)) & 255;
 
-    const auto xf = static_cast<float>(pos.x - std::floor(pos.x));
-    const auto yf = static_cast<float>(pos.y - std::floor(pos.y));
+    const float xf = pos.x - std::floor(pos.x);
+    const float yf = pos.y - std::floor(pos.y);
 
     const float u = fade(xf);
     const float v = fade(yf);
@@ -36,17 +36,16 @@ float PGS::NodeGraph::PerlinNoise2D::getValue(const sf::Vector2f& pos) const {
     return lerp(x1, x2, u);
 }
 
-float PGS::NodeGraph::PerlinNoise2D::fade(const float t) const {
+float PGS::NodeGraph::Utils::PerlinNoise2D::fade(const float t) {
     return t * t * t * (t * (t * 6 - 15) + 10);
 }
 
-float PGS::NodeGraph::PerlinNoise2D::lerp(const float a, const float b, const float t) const {
+float PGS::NodeGraph::Utils::PerlinNoise2D::lerp(const float a, const float b, const float t) {
     return a + t * (b - a);
 }
 
-float PGS::NodeGraph::PerlinNoise2D::grad(const int hash, const float x, const float y) const {
-    int h = hash & 7;
-    switch (h) {
+float PGS::NodeGraph::Utils::PerlinNoise2D::grad(const int hash, const float x, const float y) {
+    switch (hash & 7) {
         case 0: return  x + y;
         case 1: return -x + y;
         case 2: return  x - y;
@@ -60,6 +59,6 @@ float PGS::NodeGraph::PerlinNoise2D::grad(const int hash, const float x, const f
     }
 }
 
-int PGS::NodeGraph::PerlinNoise2D::hash(const int x, const int y) const {
+int PGS::NodeGraph::Utils::PerlinNoise2D::hash(const int x, const int y) const {
     return permutation[permutation[x & 255] + (y & 255)];
 }

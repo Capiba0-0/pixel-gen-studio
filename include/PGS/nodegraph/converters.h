@@ -3,9 +3,12 @@
 #include "PGS/core/buffers/pixel_buffer.h"
 #include "PGS/core/buffers/grayscale_buffer.h"
 #include "PGS/core/buffers/vector_field_buffer.h"
+
+#include "PGS/nodegraph/types.h"
+
+#include <cmath>
 #include <memory>
 #include <algorithm>
-#include <cmath>
 
 namespace PGS::NodeGraph::Converters
 {
@@ -122,9 +125,43 @@ namespace PGS::NodeGraph::Converters
         return static_cast<float>(sum) / static_cast<float>(totalPixels) / 255.f;
     }
 
-    inline sf::Color hsvToRgb(float h, const float s, const float v) {
-        h = std::fmod(h, 1.0f);
-        if (h < 0) h += 1.0f;
+    inline HSV rgbToHsv(const sf::Color& rgb) {
+        HSV hsv{};
+
+        float r = static_cast<float>(rgb.r) / 255.0f;
+        float g = static_cast<float>(rgb.g) / 255.0f;
+        float b = static_cast<float>(rgb.b) / 255.0f;
+
+        const float cMax = std::max({r, g, b});
+        const float cMin = std::min({r, g, b});
+        const float delta = cMax - cMin;
+
+        // Hue
+        if (delta == 0) {
+            hsv.h = 0;
+        } else if (cMax == r) {
+            hsv.h = std::fmod(((g - b) / delta), 6.0f);
+        } else if (cMax == g) {
+            hsv.h = (b - r) / delta + 2.0f;
+        } else { // cMax == b
+            hsv.h = (r - g) / delta + 4.0f;
+        }
+        hsv.h /= 6.0f;
+        if (hsv.h < 0) {
+            hsv.h += 1.0f;
+        }
+
+        hsv.s = (cMax == 0) ? 0 : (delta / cMax);
+
+        hsv.v = cMax;
+
+        return hsv;
+    }
+
+
+    inline sf::Color hsvToRgb(const HSV& hsv ) {
+        float r = 0, g = 0, b = 0;
+        const float h = hsv.h, s = hsv.s, v = hsv.v;
 
         const int i = static_cast<int>(h * 6);
         const float f = h * 6 - static_cast<float>(i);
@@ -133,15 +170,20 @@ namespace PGS::NodeGraph::Converters
         const float t = v * (1 - (1 - f) * s);
 
         switch (i % 6) {
-            case 0: return {static_cast<uint8_t>(v * 255), static_cast<uint8_t>(t * 255), static_cast<uint8_t>(p * 255)};
-            case 1: return {static_cast<uint8_t>(q * 255), static_cast<uint8_t>(v * 255), static_cast<uint8_t>(p * 255)};
-            case 2: return {static_cast<uint8_t>(p * 255), static_cast<uint8_t>(v * 255), static_cast<uint8_t>(t * 255)};
-            case 3: return {static_cast<uint8_t>(p * 255), static_cast<uint8_t>(q * 255), static_cast<uint8_t>(v * 255)};
-            case 4: return {static_cast<uint8_t>(t * 255), static_cast<uint8_t>(p * 255), static_cast<uint8_t>(v * 255)};
-            case 5: return {static_cast<uint8_t>(v * 255), static_cast<uint8_t>(p * 255), static_cast<uint8_t>(q * 255)};
-
-            default: return sf::Color::Black;
+            case 0: r = v, g = t, b = p; break;
+            case 1: r = q, g = v, b = p; break;
+            case 2: r = p, g = v, b = t; break;
+            case 3: r = p, g = q, b = v; break;
+            case 4: r = t, g = p, b = v; break;
+            case 5: r = v, g = p, b = q; break;
+            default: r = g = b = 0; break;
         }
+
+        return {
+            static_cast<uint8_t>(std::clamp(r, 0.0f, 1.0f) * 255.0f),
+            static_cast<uint8_t>(std::clamp(g, 0.0f, 1.0f) * 255.0f),
+            static_cast<uint8_t>(std::clamp(b, 0.0f, 1.0f) * 255.0f)
+        };
     }
 
 } // namespace PGS::NodeGraph::Converters

@@ -1,5 +1,6 @@
 #include "PGS/nodegraph/nodes/noise_texture_node.h"
 
+#include "PGS/nodegraph/helpers.h"
 #include "PGS/nodegraph/converters.h"
 #include "PGS/nodegraph/utils/perlin_noise_2d.h"
 
@@ -7,66 +8,22 @@ PGS::NodeGraph::NoiseTextureNode::NoiseTextureNode(const NodeID id, std::string 
     : Node(id, std::move(name))
 {
     // Input
-    registerInputPort({
-        .id = "in_normalize",
-        .name = "Normalize",
-        .type = DataType::Number,
-        .value = true
-    });
+    registerInputPort({ "in_normalize", "Normalize", DataType::Number, true });
 
-    registerInputPort({
-        .id = "in_vector",
-        .name = "Vector",
-        .type = DataType::VectorField
-    });
+    registerInputPort({ "in_vector", "Vector", DataType::VectorField });
 
-    registerInputPort({
-        .id = "in_scale",
-        .name = "Scale",
-        .type = DataType::Number,
-        .value = 5.0f
-    });
+    registerInputPort({ "in_scale", "Scale", DataType::Number, 5.0f });
+    registerInputPort({ "in_detail", "Detail", DataType::Number, 2.0f });
 
-    registerInputPort({
-        .id = "in_detail",
-        .name = "Detail",
-        .type = DataType::Number,
-        .value = 2.0f
-    });
+    registerInputPort({ "in_roughness", "Roughness", DataType::Number, 0.5f,
+        Metadata{.description = "Roughness of the effect", .minValue = 0.0f, .maxValue = 1.0f}});
 
-    registerInputPort({
-        .id = "in_roughness",
-        .name = "Roughness",
-        .type = DataType::Number,
-        .value = 0.5f
-    });
-
-    registerInputPort({
-        .id = "in_lacunarity",
-        .name = "Lacunarity",
-        .type = DataType::Number,
-        .value = 2.0f
-    });
-
-    registerInputPort({
-        .id = "in_distortion",
-        .name = "Distortion",
-        .type = DataType::Number,
-        .value = 0.0f
-    });
+    registerInputPort({ "in_lacunarity", "Lacunarity", DataType::Number, 2.0f });
+    registerInputPort({ "in_distortion", "Distortion", DataType::Number, 0.0f });
 
     // Output
-    registerOutputPort({
-        .id = "out_grayscale",
-        .name = "Grayscale",
-        .type = DataType::Grayscale
-    });
-
-    registerOutputPort({
-        .id = "out_color",
-        .name = "Color",
-        .type = DataType::Color
-    });
+    registerOutputPort({ "out_grayscale", "Grayscale", DataType::Grayscale });
+    registerOutputPort({ "out_color", "Color", DataType::Color });
 }
 
 std::unordered_map<PGS::NodeGraph::PortID, PGS::NodeGraph::NodeData> PGS::NodeGraph::NoiseTextureNode::calculate(
@@ -91,7 +48,7 @@ std::unordered_map<PGS::NodeGraph::PortID, PGS::NodeGraph::NodeData> PGS::NodeGr
 
     for (unsigned int y = 0; y < bufferSize.y; ++y) {
         for (unsigned int x = 0; x < bufferSize.x; ++x) {
-            PerlinNoise2D perlin;
+            Utils::PerlinNoise2D perlin;
 
             sf::Vector2f coord = {
                 static_cast<float>(x) / static_cast<float>(bufferSize.x),
@@ -145,13 +102,11 @@ std::unordered_map<PGS::NodeGraph::PortID, PGS::NodeGraph::NodeData> PGS::NodeGr
 
             outGrayscale->setValue({x, y}, grayValue);
 
-            sf::Color color = Converters::hsvToRgb(val, 1.0f, 1.0f);
+            sf::Color color = Converters::hsvToRgb({val, 1.0f, 1.0f});
             outColor->setPixel({x, y}, color);
         }
     }
 
-    std::unordered_map<PortID, NodeData> results;
-    results["out_color"] = std::move(outColor);
-    results["out_grayscale"] = std::move(outGrayscale);
-    return results;
+    return {{"out_color", std::move(outColor)},
+            {"out_grayscale", std::move(outGrayscale)}};
 }

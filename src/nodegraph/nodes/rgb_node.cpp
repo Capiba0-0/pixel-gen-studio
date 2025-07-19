@@ -1,22 +1,15 @@
 #include "PGS/nodegraph/nodes/rgb_node.h"
 
+#include "PGS/nodegraph/helpers.h"
+
 PGS::NodeGraph::RGBNode::RGBNode(const NodeID id, std::string name)
     : Node(id, std::move(name))
 {
     // Input
-    registerInputPort({
-        .id = "in_color",
-        .name = "",
-        .type = DataType::Color,
-        .value = sf::Color::White
-    });
+    registerInputPort({ "in_color", "", DataType::Color, sf::Color::White });
 
     // Output
-    registerOutputPort({
-        .id = "out_color",
-        .name = "Color",
-        .type = DataType::Color
-    });
+    registerOutputPort({ "out_color", "Color", DataType::Color });
 }
 
 std::unordered_map<PGS::NodeGraph::PortID, PGS::NodeGraph::NodeData> PGS::NodeGraph::RGBNode::calculate(

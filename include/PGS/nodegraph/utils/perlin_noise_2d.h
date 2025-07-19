@@ -3,7 +3,7 @@
 #include <vector>
 #include <SFML/System/Vector2.hpp>
 
-namespace PGS::NodeGraph
+namespace PGS::NodeGraph::Utils
 {
 
 class PerlinNoise2D {
@@ -15,9 +15,9 @@ public:
 private:
     std::vector<int> permutation;
 
-    [[nodiscard]] float fade(float t) const;
-    [[nodiscard]] float lerp(float a, float b, float t) const;
-    [[nodiscard]] float grad(int hash, float x, float y) const;
+    [[nodiscard]] static float fade(float t) ;
+    [[nodiscard]] static float lerp(float a, float b, float t) ;
+    [[nodiscard]] static float grad(int hash, float x, float y) ;
     [[nodiscard]] int hash(int x, int y) const;
 };
 

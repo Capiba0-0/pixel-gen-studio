@@ -1,5 +1,7 @@
 #include "PGS/nodegraph/nodes/math_node.h"
 
+#include "PGS/nodegraph/helpers.h"
+
 #include "cmath"
 
 PGS::NodeGraph::MathNode::MathNode(const NodeID id, std::string name)

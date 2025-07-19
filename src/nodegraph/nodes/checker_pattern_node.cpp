@@ -1,5 +1,7 @@
 #include "PGS/nodegraph/nodes/checker_pattern_node.h"
 
+#include "PGS/nodegraph/helpers.h"
+
 #include "PGS/core/buffers/pixel_buffer.h"
 #include "PGS/core/buffers/grayscale_buffer.h"
 #include "PGS/core/buffers/vector_field_buffer.h"
@@ -11,45 +13,16 @@ PGS::NodeGraph::CheckerPatternNode::CheckerPatternNode(const NodeID id, std::str
     : Node(id, std::move(name))
 {
     // Input
-    registerInputPort({
-        .id = "in_vector",
-        .name = "Vector",
-        .type = DataType::VectorField
-    });
+    registerInputPort({ "in_vector", "Vector", DataType::VectorField });
 
-    registerInputPort({
-        .id = "in_color1",
-        .name = "Color1",
-        .type = DataType::Color,
-        .value = sf::Color::White
-    });
+    registerInputPort({ "in_color1", "Color1", DataType::Color, sf::Color::White });
+    registerInputPort({ "in_color2", "Color2", DataType::Color, sf::Color::Black });
 
-    registerInputPort({
-        .id = "in_color2",
-        .name = "Color2",
-        .type = DataType::Color,
-        .value = sf::Color::Black
-    });
-
-    registerInputPort({
-        .id = "in_scale",
-        .name = "Scale",
-        .type = DataType::Number,
-        .value = 1
-    });
+    registerInputPort({ "in_scale", "Scale", DataType::Number, 1 });
 
     // Output
-    registerOutputPort({
-        .id = "out_color",
-        .name = "Color",
-        .type = DataType::Color
-    });
-
-    registerOutputPort({
-        .id = "out_grayscale",
-        .name = "Grayscale",
-        .type = DataType::Grayscale
-    });
+    registerOutputPort({ "out_color", "Color", DataType::Color });
+    registerOutputPort({ "out_grayscale", "Grayscale", DataType::Grayscale });
 }
 
 std::unordered_map<PGS::NodeGraph::PortID, PGS::NodeGraph::NodeData> PGS::NodeGraph::CheckerPatternNode::calculate(
