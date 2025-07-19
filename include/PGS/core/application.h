@@ -1,7 +1,6 @@
 #pragma once
 
 // -- PGS Headers --
-#include "PGS/gui/canvas.h"
 #include "PGS/gui/ui_context.h"
 #include "PGS/core/managers/ui_manager.h"
 
@@ -15,7 +14,6 @@
 #include <vector>
 
 #include "managers/document_manager.h"
-#include "../gui/node_editor/node_editor_widget.h"
 
 namespace PGS
 {

@@ -1,22 +1,30 @@
 #include "PGS/nodegraph/evaluator.h"
 
+// -- PGS Headers --
 #include "PGS/nodegraph/types.h"
 #include "PGS/core/buffers/pixel_buffer.h"
 #include "PGS/nodegraph/evaluator_observer.h"
 
+// -- Nodes --
 #include "PGS/nodegraph/node.h"
-#include "PGS/nodegraph/nodes/checker_pattern_node.h"
+//
 #include "PGS/nodegraph/nodes/texture_output_node.h"
-#include "PGS/nodegraph/nodes/circle_pattern_node.h"
+//
+#include "PGS/nodegraph/nodes/checker_pattern_node.h"
 #include "PGS/nodegraph/nodes/noise_texture_node.h"
+#include "PGS/nodegraph/nodes/voronoi_texture_node.h"
+//
+#include "PGS/nodegraph/nodes/circle_pattern_node.h"
+#include "PGS/nodegraph/nodes/rectangle_pattern_node.h"
+//
 #include "PGS/nodegraph/nodes/value_node.h"
 #include "PGS/nodegraph/nodes/rgb_node.h"
+//
 #include "PGS/nodegraph/nodes/math_node.h"
 
+// -- STL Headers --
 #include <algorithm>
 #include <cassert>
-
-#include "PGS/nodegraph/nodes/rectangle_pattern_node.h"
 
 // -- Constructor --
 PGS::NodeGraph::Evaluator::Evaluator()
@@ -25,6 +33,7 @@ PGS::NodeGraph::Evaluator::Evaluator()
 
     registerNode<CheckerPatternNode>("Checker Texture");
     registerNode<NoiseTextureNode>("Noise Texture");
+    registerNode<VoronoiTextureNode>("Voronoi Texture");
 
     registerNode<CirclePatternNode>("Circle");
     registerNode<RectanglePatternNode>("Rectangle");
