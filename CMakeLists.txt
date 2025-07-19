@@ -83,6 +83,7 @@ add_executable(${PROJECT_NAME} # TODO: Split the .cpp connection into smaller CM
         src/nodegraph/nodes/mix_color_node.cpp
         src/nodegraph/nodes/invert_color_node.cpp
         src/nodegraph/nodes/hsv_node.cpp
+        src/nodegraph/nodes/gradient_texture_node.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE SFML::Graphics SFML::Window SFML::System)

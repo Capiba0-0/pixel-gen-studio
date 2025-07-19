@@ -13,6 +13,7 @@
 #include "PGS/nodegraph/nodes/checker_pattern_node.h"
 #include "PGS/nodegraph/nodes/noise_texture_node.h"
 #include "PGS/nodegraph/nodes/voronoi_texture_node.h"
+#include "PGS/nodegraph/nodes/gradient_texture_node.h"
 //
 #include "PGS/nodegraph/nodes/circle_pattern_node.h"
 #include "PGS/nodegraph/nodes/rectangle_pattern_node.h"
@@ -37,6 +38,7 @@ PGS::NodeGraph::Evaluator::Evaluator()
     registerNode<CheckerPatternNode>("Checker Texture");
     registerNode<NoiseTextureNode>("Noise Texture");
     registerNode<VoronoiTextureNode>("Voronoi Texture");
+    registerNode<GradientTextureNode>("Gradient Texture");
 
     registerNode<CirclePatternNode>("Circle");
     registerNode<RectanglePatternNode>("Rectangle");
