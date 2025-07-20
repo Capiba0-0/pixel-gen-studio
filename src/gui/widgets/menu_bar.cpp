@@ -5,7 +5,6 @@
 #include "imgui.h"
 #include "imgui-SFML.h"
 #include "PGS/gui/widgets/about_window.h"
-#include "PGS/gui/widgets/about_window.h"
 #include "PGS/gui/widgets/new_canvas_window.h"
 
 PGS::Gui::MenuBar::MenuBar(const sf::Texture& icon)
@@ -57,10 +56,10 @@ void PGS::Gui::MenuBar::renderContent(UIContext& context)
         //     ImGui::EndMenu();
         // }
 
-        if (ImGui::BeginMenu("Window")) {
-
-            ImGui::EndMenu();
-        }
+        // if (ImGui::BeginMenu("Window")) {
+        //
+        //     ImGui::EndMenu();
+        // }
     }
     ImGui::EndMainMenuBar();
 

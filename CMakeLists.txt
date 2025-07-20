@@ -59,31 +59,39 @@ add_executable(${PROJECT_NAME} # TODO: Split the .cpp connection into smaller CM
     src/gui/node_editor/input/node_editor_input_handler.cpp
 
     # Node Graph
-    src/nodegraph/node.cpp
-    src/nodegraph/evaluator.cpp
+    src/node_graph/node.cpp
+    src/node_graph/evaluator.cpp
 
-    src/nodegraph/utils/perlin_noise_2d.cpp
+    # - Utils
+    src/node_graph/utils/perlin_noise_2d.cpp
 
     # - Nodes
-    src/nodegraph/nodes/checker_pattern_node.cpp
-    src/nodegraph/nodes/texture_output_node.cpp
-    src/nodegraph/nodes/circle_pattern_node.cpp
-    src/nodegraph/nodes/rectangle_pattern_node.cpp
-    src/nodegraph/nodes/noise_texture_node.cpp
-
+    src/node_graph/nodes/texture_output_node.cpp
+    #
+    src/node_graph/nodes/checker_pattern_node.cpp
+    src/node_graph/nodes/noise_texture_node.cpp
+    src/node_graph/nodes/voronoi_texture_node.cpp
+    src/node_graph/nodes/gradient_texture_node.cpp
+    #
+    src/node_graph/nodes/circle_pattern_node.cpp
+    src/node_graph/nodes/rectangle_pattern_node.cpp
+    #
+    src/node_graph/nodes/value_node.cpp
+    src/node_graph/nodes/math_node.cpp
+    #
+    src/node_graph/nodes/rgb_node.cpp
+    src/node_graph/nodes/mix_color_node.cpp
+    src/node_graph/nodes/invert_color_node.cpp
+    src/node_graph/nodes/hsv_node.cpp
+    #
+    src/node_graph/nodes/mapping_node.cpp
 
     # Libraries
     ${IMGUI_SOURCES}
     ${IMGUI_SFML_SOURCES}
     ${IMGUI_IMNODES_SOURCES}
-        src/nodegraph/nodes/value_node.cpp
-        src/nodegraph/nodes/rgb_node.cpp
-        src/nodegraph/nodes/math_node.cpp
-        src/nodegraph/nodes/voronoi_texture_node.cpp
-        src/nodegraph/nodes/mix_color_node.cpp
-        src/nodegraph/nodes/invert_color_node.cpp
-        src/nodegraph/nodes/hsv_node.cpp
-        src/nodegraph/nodes/gradient_texture_node.cpp
+        src/node_graph/nodes/combine_xy_node.cpp
+        src/node_graph/nodes/separate_xy_node.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE SFML::Graphics SFML::Window SFML::System)

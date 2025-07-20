@@ -1,7 +1,7 @@
 #include "PGS/gui/node_editor/input/node_editor_input_handler.h"
 
 #include "PGS/gui/node_editor/input/commands.h"
-#include "PGS/nodegraph/types.h"
+#include "PGS/node_graph/types.h"
 
 #include "imgui.h"
 #include "imnodes.h"

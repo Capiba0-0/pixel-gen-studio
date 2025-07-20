@@ -1,8 +1,8 @@
 #pragma once
 
-#include "PGS/nodegraph/types.h"
-#include "PGS/nodegraph/node.h"
-#include "PGS/nodegraph/evaluator_observer.h"
+#include "PGS/node_graph/types.h"
+#include "PGS/node_graph/node.h"
+#include "PGS/node_graph/evaluator_observer.h"
 
 #include <unordered_map>
 #include <optional>

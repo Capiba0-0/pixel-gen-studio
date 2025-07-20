@@ -2,7 +2,7 @@
 
 #include "PGS/gui/ui_events.h"
 #include "PGS/core/managers/ui_manager_interface.h"
-#include "PGS/nodegraph/evaluator.h"
+#include "PGS/node_graph/evaluator.h"
 
 #include <SFML/System/Time.hpp>
 

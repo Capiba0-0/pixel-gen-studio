@@ -1,11 +1,11 @@
 #include "PGS/gui/node_editor/node_editor_renderer.h"
 
 #include "PGS/gui/ui_helpers.h"
-#include "PGS/nodegraph/node.h"
+#include "PGS/node_graph/node.h"
 #include "PGS/gui/node_editor/node_editor_state.h"
 #include "PGS/gui/node_editor/input/commands.h"
 #include "PGS/gui/node_editor/input/node_editor_input_handler.h"
-#include "PGS/nodegraph/types.h"
+#include "PGS/node_graph/types.h"
 
 #include "imnodes.h"
 

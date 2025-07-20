@@ -1,7 +1,7 @@
 #include "PGS/gui/node_editor/node_editor_state.h"
 
 #include "PGS/gui/ui_context.h"
-#include "PGS/nodegraph/node.h"
+#include "PGS/node_graph/node.h"
 
 #include <optional>
 

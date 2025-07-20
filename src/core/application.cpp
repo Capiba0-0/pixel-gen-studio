@@ -6,7 +6,7 @@
 #include "../../include/PGS/gui/node_editor/node_editor_widget.h"
 #include "PGS/gui/ui_events.h"
 #include "PGS/gui/ui_context.h"
-#include "PGS/nodegraph/node.h"
+#include "PGS/node_graph/node.h"
 
 // -- Libraries Headers --
 #include "imgui.h"
