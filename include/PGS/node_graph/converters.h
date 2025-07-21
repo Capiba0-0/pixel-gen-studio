@@ -38,7 +38,6 @@ namespace PGS::NodeGraph::Converters
         auto grayscaleBuffer = std::make_shared<GrayscaleBuffer>(size);
         const uint8_t byteValue = static_cast<uint8_t>(std::clamp(value, 0.0f, 1.0f) * 255.0f);
 
-        // TODO: Maybe it will be better to make this func friend for class GrayscaleBuffer instead of using const_cast
         auto* dataPtr = const_cast<uint8_t*>(grayscaleBuffer->getData());
         std::fill_n(dataPtr, (size.x * size.y), byteValue);
 

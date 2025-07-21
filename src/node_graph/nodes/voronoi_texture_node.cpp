@@ -5,6 +5,7 @@
 
 #include <random>
 
+
 // -- Private --
 float PGS::NodeGraph::VoronoiTextureNode::distance(const sf::Vector2f& a, const sf::Vector2f& b, const int metric)
 {
@@ -20,8 +21,9 @@ float PGS::NodeGraph::VoronoiTextureNode::distance(const sf::Vector2f& a, const 
 sf::Color PGS::NodeGraph::VoronoiTextureNode::idToColor(const size_t id)
 {
     std::mt19937 rng(static_cast<unsigned int>(id));
-    std::uniform_int_distribution<uint8_t> dist(0, 255);
-    return {dist(rng), dist(rng), dist(rng)};
+    std::uniform_int_distribution<int> dist(0, 255);
+    return {static_cast<std::uint8_t>(dist(rng)), static_cast<std::uint8_t>(dist(rng)), static_cast<std::uint8_t>(dist(rng))};
+
 }
 
 std::vector<sf::Vector2f> PGS::NodeGraph::VoronoiTextureNode::generateFeaturePoints(

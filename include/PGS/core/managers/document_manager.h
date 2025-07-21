@@ -1,5 +1,6 @@
 #pragma once
 
+#include "PGS/core/config.h"
 #include "PGS/gui/canvas.h"
 
 #include <SFML/System/Vector2.hpp>
@@ -7,8 +8,6 @@
 #include <SFML/System/Time.hpp>
 
 #include <memory>
-
-#include "PGS/core/config.h"
 
 namespace PGS
 {

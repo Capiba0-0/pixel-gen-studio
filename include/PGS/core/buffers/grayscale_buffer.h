@@ -12,7 +12,7 @@ class GrayscaleBuffer
 {
 private:
     sf::Vector2u m_size;
-    std::vector<std::uint8_t> m_values;
+    std::vector<std::uint8_t> m_values{};
 
 public:
     // --- Constructors | Destructor ---

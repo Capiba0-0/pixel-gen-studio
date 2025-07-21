@@ -3,6 +3,7 @@
 // -- PGS Headers --
 #include "PGS/gui/ui_context.h"
 #include "PGS/core/managers/ui_manager.h"
+#include "PGS/core/managers/document_manager.h"
 
 // -- Libraries Headers --
 #include <SFML/Graphics/RenderWindow.hpp>
@@ -12,8 +13,6 @@
 
 // -- STL Headers --
 #include <vector>
-
-#include "managers/document_manager.h"
 
 namespace PGS
 {
@@ -28,10 +27,9 @@ private:
 
 	sf::Texture m_icon;
 
+	NodeGraph::Evaluator m_evaluator;
 	DocumentManager m_documentManager;
 	Gui::UIManager m_uiManager;
-
-	NodeGraph::Evaluator m_evaluator;
 
 	std::vector<Events::UIEvent> m_eventQueue;
 

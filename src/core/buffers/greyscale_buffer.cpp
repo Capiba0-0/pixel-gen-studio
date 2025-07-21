@@ -1,15 +1,16 @@
 #include "PGS/core/buffers/grayscale_buffer.h"
 
+#include <string>
+
 #ifndef NDEBUG
 #include <stdexcept>
 #endif
 
 PGS::GrayscaleBuffer::GrayscaleBuffer(const sf::Vector2u& size)
-    : m_size(size)
+    : m_size{size}
 {
     m_values.resize(m_size.x * m_size.y);
 }
-
 
 void PGS::GrayscaleBuffer::setValue(const sf::Vector2u& pos, const uint8_t value)
 {

@@ -1,5 +1,7 @@
 #include "PGS/core/buffers/vector_field_buffer.h"
 
+#include <string>
+
 #ifndef NDEBUG
 #include <stdexcept>
 #endif

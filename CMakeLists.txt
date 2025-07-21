@@ -2,8 +2,9 @@ cmake_minimum_required(VERSION 3.21)
 
 project(pixel-gen-studio VERSION 0.1.0 LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_CXX_STANDARD_REQUIRED true)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 find_package(SFML 3.0.0 REQUIRED COMPONENTS System Window Graphics CONFIG)
 find_package(OpenGL REQUIRED)
@@ -13,11 +14,11 @@ find_package(OpenGL REQUIRED)
 include_directories(include third_party/imgui/include third_party/imgui-sfml/include third_party/imnodes/include)
 
 set(IMGUI_SOURCES
-    third_party/imgui/imgui.cpp 
-    third_party/imgui/imgui_demo.cpp 
-    third_party/imgui/imgui_draw.cpp 
-    third_party/imgui/imgui_tables.cpp 
-    third_party/imgui/imgui_widgets.cpp 
+    third_party/imgui/imgui.cpp
+    third_party/imgui/imgui_demo.cpp
+    third_party/imgui/imgui_draw.cpp
+    third_party/imgui/imgui_tables.cpp
+    third_party/imgui/imgui_widgets.cpp
 )
 
 set(IMGUI_SFML_SOURCES
@@ -85,25 +86,26 @@ add_executable(${PROJECT_NAME} # TODO: Split the .cpp connection into smaller CM
     src/node_graph/nodes/hsv_node.cpp
     #
     src/node_graph/nodes/mapping_node.cpp
+    #
+    src/node_graph/nodes/combine_xy_node.cpp
+    src/node_graph/nodes/separate_xy_node.cpp
 
     # Libraries
     ${IMGUI_SOURCES}
     ${IMGUI_SFML_SOURCES}
     ${IMGUI_IMNODES_SOURCES}
-        src/node_graph/nodes/combine_xy_node.cpp
-        src/node_graph/nodes/separate_xy_node.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE SFML::Graphics SFML::Window SFML::System)
 target_link_libraries(${PROJECT_NAME} PRIVATE OpenGL::GL)
 
-add_custom_target(copy_assets ALL
-    COMMAND ${CMAKE_COMMAND} -E copy_directory
-    ${CMAKE_SOURCE_DIR}/assets
-    ${CMAKE_BINARY_DIR}/assets
+add_custom_command(
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+        "${CMAKE_SOURCE_DIR}/assets"
+        "$<TARGET_FILE_DIR:${PROJECT_NAME}>/assets"
+        COMMENT "Copying assets to output directory"
 )
-
-add_dependencies(${PROJECT_NAME} copy_assets)
 
 # Coping DLLs to the directory of .exe file
 if(WIN32)

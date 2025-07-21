@@ -4,19 +4,15 @@
 #include "PGS/gui/ui_context.h"
 #include "PGS/gui/widget.h"
 #include "PGS/core/managers/ui_manager_interface.h"
-#include "PGS/core/types.h"
 
 // -- Libraries Headers --
-#include <SFML/Window/Event.hpp>
-#include <SFML/System/Time.hpp>
 #include <SFML/Graphics/Texture.hpp>
 
 // -- STL Headers --
 #include <memory>
+#include <optional>
 #include <unordered_map>
-#include <vector>
 #include <typeindex>
-#include <tuple>
 #include <functional>
 
 namespace PGS::Gui
@@ -73,7 +69,7 @@ public:
 
     // --- WidgetManager Overrides ---
     WidgetID createWidget(const std::type_index& typeIndex) override;
-    WidgetID createWidget(const std::type_index& typeIndex, std::function<void(Widget&)> initializer) override;
+    WidgetID createWidget(const std::type_index& typeIndex, const std::function<void(Widget&)>& initializer) override;
     void closeWidget(WidgetID id) override;
 
     void requestFocus(WidgetID id) override;
