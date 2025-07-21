@@ -17,7 +17,6 @@ private:
     const NodeID m_id;
     std::string m_name;
 
-    // TODO: It may be better to keep std::vector to maintain order
     std::vector<InputPort> m_inputPorts;
     std::vector<OutputPort> m_outputPorts;
 

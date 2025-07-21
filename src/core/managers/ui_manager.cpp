@@ -33,12 +33,12 @@ void PGS::Gui::UIManager::render(UIContext& context)
 void PGS::Gui::UIManager::onEvent(const sf::Event& event)
 {
     if (m_renderStack.empty())
-        return;
+       return;
 
     if (m_modalWidgetID.has_value())
     {
         if (const auto it = m_widgets.find(m_modalWidgetID.value()); it != m_widgets.end())
-            it->second->onEvent(event);
+           it->second->onEvent(event);
         return;
     }
 
@@ -80,7 +80,7 @@ PGS::Gui::WidgetID PGS::Gui::UIManager::createWidget(const std::type_index& type
     return createWidget(typeIndex, nullptr);
 }
 
-PGS::Gui::WidgetID PGS::Gui::UIManager::createWidget(const std::type_index& typeIndex, const std::function<void(Widget&)> initializer)
+PGS::Gui::WidgetID PGS::Gui::UIManager::createWidget(const std::type_index& typeIndex, const std::function<void(Widget&)>& initializer)
 {
     const auto factory = m_widgetFactories.find(typeIndex);
     if (factory == m_widgetFactories.end())
@@ -116,7 +116,7 @@ void PGS::Gui::UIManager::closeWidget(const WidgetID id)
     m_widgets.erase(id);
 }
 
-void PGS::Gui::UIManager::requestFocus(WidgetID id)
+void PGS::Gui::UIManager::requestFocus(const WidgetID id)
 {
     if (m_widgets.find(id) == m_widgets.end())
         return;

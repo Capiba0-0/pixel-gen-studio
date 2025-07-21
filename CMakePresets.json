@@ -1,11 +1,10 @@
 {
     "version": 3,
     "configurePresets": [
-
         {
             "name": "windows-mingw-r",
             "displayName": "Windows MinGW Release",
-            "description": "Builds with MinGW GCC and vcpkg triplet x64-mingw-dynamic, Release configuration",
+            "description": "Build with MinGW GCC and vcpkg triplet x64-mingw-dynamic, Release configuration",
             "generator": "MinGW Makefiles",
             "binaryDir": "${sourceDir}/build/windows-mingw-release",
 
@@ -19,7 +18,7 @@
         {
             "name": "windows-mingw-d",
             "displayName": "Windows MinGW Debug",
-            "description": "Builds with MinGW GCC and vcpkg triplet x64-mingw-dynamic, Debug configuration",
+            "description": "Build with MinGW GCC and vcpkg triplet x64-mingw-dynamic, Debug configuration",
             "generator": "MinGW Makefiles",
             "binaryDir": "${sourceDir}/build/windows-mingw-debug",
 
@@ -37,18 +36,18 @@
             "generator": "Visual Studio 17 2022",
             "architecture": "x64",
             "binaryDir": "${sourceDir}/build/windows-visual-studio",
-            
+
             "cacheVariables": {
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
                 "VCPKG_TARGET_TRIPLET": "x64-windows"
             }
         },
 
-        
+
         {
             "name": "linux-gcc-r",
             "displayName": "Linux GCC Release",
-            "description": "Builds with GCC, Release configuration",
+            "description": "Build with GCC, Release configuration",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/linux-gcc-release",
             "cacheVariables": {
@@ -61,7 +60,7 @@
         {
             "name": "linux-gcc-d",
             "displayName": "Linux GCC Debug",
-            "description": "Builds with GCC, Debug configuration",
+            "description": "Build with GCC, Debug configuration",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/linux-gcc-release",
             "cacheVariables": {
@@ -69,6 +68,79 @@
                 "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
                 "VCPKG_TARGET_TRIPLET": "x64-linux"
             }
+        },
+
+
+        {
+            "name": "macos-clang-r",
+            "displayName": "MacOS Clang Release",
+            "description": "Build with Clang(MacOS), Release configuration",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/macos-clang-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                "VCPKG_TARGET_TRIPLET": "arm64-osx"
+            }
+        },
+
+        {
+            "name": "macos-clang-d",
+            "displayName": "MacOS Clang Debug",
+            "description": "Build with Clang(MacOS), Debug configuration",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/macos-clang-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+                "VCPKG_TARGET_TRIPLET": "arm64-osx"
+            }
         }
-    ]
+    ],
+
+	"buildPresets": [
+		{
+			"name": "windows-mingw-r-build",
+			"displayName": "Windows MinGW Release Build",
+			"configurePreset": "windows-mingw-r"
+		},
+
+		{
+			"name": "windows-mingw-d-build",
+			"displayName": "Windows MinGW Debug Build",
+			"configurePreset": "windows-mingw-d"
+		},
+
+		{
+			"name": "windows-vs2022-build",
+			"displayName": "Windows Visual Studio Build",
+			"configurePreset": "windows-vs2022"
+		},
+
+
+		{
+			"name": "linux-gcc-r-build",
+			"displayName": "Linux GCC Release Build",
+			"configurePreset": "linux-gcc-r"
+		},
+
+		{
+			"name": "linux-gcc-d-build",
+			"displayName": "Linux GCC Debug Build",
+			"configurePreset": "linux-gcc-d"
+		},
+
+
+		{
+			"name": "macos-clang-r-build",
+			"displayName": "MacOS Clang Release Build",
+			"configurePreset": "macos-clang-r"
+		},
+
+		{
+			"name": "macos-clang-d-build",
+			"displayName": "MacOS Clang Debug Build",
+			"configurePreset": "macos-clang-d"
+		}
+	]
 }

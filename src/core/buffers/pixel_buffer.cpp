@@ -1,6 +1,6 @@
 #include "PGS/core/buffers/pixel_buffer.h"
 
-#include <cstdint>
+#include <string>
 
 #ifndef NDEBUG
 #include <stdexcept>

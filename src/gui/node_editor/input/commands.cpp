@@ -7,7 +7,6 @@
 
 #include <vector>
 
-
 void PGS::Gui::DeleteSelectedCommand::execute(UIContext& context, NodeEditorState& state)
 {
     int numSelectedLinks = ImNodes::NumSelectedLinks();

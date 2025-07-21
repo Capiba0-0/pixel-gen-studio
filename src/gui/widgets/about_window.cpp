@@ -43,7 +43,7 @@ void PGS::Gui::AboutWindow::renderContent(UIContext& context)
 	// Tech info
 	ImGui::Separator();
 	ImGui::Text("Powered by:");
-	ImGui::BulletText("C++17");
+	ImGui::BulletText("C++20");
 	ImGui::BulletText("SFML:"); ImGui::SameLine(); ImGui::TextLinkOpenURL("www.sfml-dev.org", "https://www.sfml-dev.org");
 	ImGui::BulletText("Dear ImGui:"); ImGui::SameLine(); ImGui::TextLinkOpenURL("github.com/ocornut/imgui", "https://github.com/ocornut/imgui");
 	ImGui::BulletText("imgui-sfml:"); ImGui::SameLine(); ImGui::TextLinkOpenURL("github.com/SFML/imgui-sfml", "https://github.com/SFML/imgui-sfml");

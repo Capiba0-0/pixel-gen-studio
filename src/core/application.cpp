@@ -3,7 +3,7 @@
 // -- PGS Headers --
 #include "PGS/gui/imgui_setup.h"
 #include "PGS/gui/widgets/menu_bar.h"
-#include "../../include/PGS/gui/node_editor/node_editor_widget.h"
+#include "PGS/gui/node_editor/node_editor_widget.h"
 #include "PGS/gui/ui_events.h"
 #include "PGS/gui/ui_context.h"
 #include "PGS/node_graph/node.h"
@@ -35,8 +35,8 @@ PGS::Application::Application(sf::Vector2u windowSize)
 	, m_uiManager(m_icon)
 {
 	if (!m_window.isOpen())
-		throw std::runtime_error("FATAL ERROR: Failed to create SFML window.");
 		// TODO: Make new error-class for Fatal Errors
+		throw std::runtime_error("FATAL ERROR: Failed to create SFML window.");
 
 	m_window.setFramerateLimit(60);
 
@@ -47,7 +47,7 @@ PGS::Application::Application(sf::Vector2u windowSize)
 	m_imguiIsInitialized = true;
 
 	// Initialize PGS icon
-	if (!m_icon.loadFromFile("assets/icons/Icon.png"))
+	if (!m_icon.loadFromFile("assets/icons/icon.png"))
 		throw std::runtime_error("Failed to load icon texture from assets/icons");
 
 	m_icon.setSmooth(true);
@@ -60,12 +60,12 @@ PGS::Application::Application(sf::Vector2u windowSize)
 	// Menu Bar create
 	m_uiManager.createWidget(typeid(Gui::MenuBar));
 	m_uiManager.createWidget(typeid(Gui::NodeEditorWidget),
-	[this](Gui::Widget& widget)
-	{
-		if (auto* nodeEditor = dynamic_cast<Gui::NodeEditorWidget*>(&widget)) {
-			nodeEditor->initialize(m_evaluator);
-		}
-	});
+	                         [this](Gui::Widget& widget)
+	                         {
+		                         if (auto* nodeEditor = dynamic_cast<Gui::NodeEditorWidget*>(&widget)) {
+			                         nodeEditor->initialize(m_evaluator);
+		                         }
+	                         });
 }
 
 // --- Destructor ---

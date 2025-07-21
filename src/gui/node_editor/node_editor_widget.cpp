@@ -49,7 +49,6 @@ void PGS::Gui::NodeEditorWidget::renderContent(UIContext& context)
 
     std::vector<std::unique_ptr<Command>> frameCommands;
 
-    // TODO: Rework this method in accordance with the Dependency Inversion principle
     m_inputHandler->processInput(frameCommands);
     m_renderer->renderPopups(context, *m_state, frameCommands);
 
