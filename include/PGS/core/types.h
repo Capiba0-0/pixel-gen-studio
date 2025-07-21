@@ -1,5 +1,7 @@
 #pragma once
 
+#include <cstddef>
+
 namespace PGS::Gui
 {
     using WidgetID = size_t;

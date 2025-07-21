@@ -4,6 +4,7 @@
 #include "PGS/node_graph/node.h"
 
 #include <optional>
+#include <stdexcept>
 
 int PGS::Gui::NodeEditorState::generateNextAttributeID()
 {
@@ -24,7 +25,7 @@ int PGS::Gui::NodeEditorState::getIntPortID(const NodeGraph::OutputPortLocator& 
         return it->second;
     }
 
-    assert(false && "An out-of-sync occurred inside NodeEditorState");
+    throw std::runtime_error("An out-of-sync occurred inside NodeEditorState");
 }
 
 
@@ -36,7 +37,7 @@ int PGS::Gui::NodeEditorState::getIntPortID(const NodeGraph::InputPortLocator& i
         return it->second;
     }
 
-    assert(false && "An out-of-sync occurred inside NodeEditorState");
+    throw std::runtime_error("An out-of-sync occurred inside NodeEditorState");
 }
 
 int PGS::Gui::NodeEditorState::getConnectionID(const NodeGraph::Connection& connection) const
@@ -47,7 +48,7 @@ int PGS::Gui::NodeEditorState::getConnectionID(const NodeGraph::Connection& conn
         return it->second;
     }
 
-    assert(false && "An out-of-sync occurred inside NodeEditorState");
+    throw std::runtime_error("An out-of-sync occurred inside NodeEditorState");
 }
 
 std::optional<PGS::NodeGraph::Connection> PGS::Gui::NodeEditorState::getConnectionByID(const int id) const

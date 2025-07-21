@@ -100,11 +100,11 @@ target_link_libraries(${PROJECT_NAME} PRIVATE SFML::Graphics SFML::Window SFML::
 target_link_libraries(${PROJECT_NAME} PRIVATE OpenGL::GL)
 
 add_custom_command(
-        TARGET ${PROJECT_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
-        "${CMAKE_SOURCE_DIR}/assets"
-        "$<TARGET_FILE_DIR:${PROJECT_NAME}>/assets"
-        COMMENT "Copying assets to output directory"
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory_if_different
+    "${CMAKE_SOURCE_DIR}/assets"
+    "$<TARGET_FILE_DIR:${PROJECT_NAME}>/assets"
+    COMMENT "Copying assets to output directory"
 )
 
 # Coping DLLs to the directory of .exe file
