@@ -28,7 +28,7 @@ const PGS::NodeGraph::InputPort& PGS::NodeGraph::Node::getInputPort(const PortID
             return inputPort;
     }
 
-    assert(false && "The entered input port ID is not valid");
+    throw std::runtime_error("The entered input port ID is not valid");
 }
 
 const PGS::NodeGraph::OutputPort& PGS::NodeGraph::Node::getOutputPort(const PortID& id) const
@@ -39,7 +39,7 @@ const PGS::NodeGraph::OutputPort& PGS::NodeGraph::Node::getOutputPort(const Port
             return outputPort;
     }
 
-    assert(false && "The entered output port ID is not valid");
+    throw std::runtime_error("The entered output port ID is not valid");
 }
 
 const std::vector<PGS::NodeGraph::InputPort>& PGS::NodeGraph::Node::getInputPorts() const

@@ -30,7 +30,7 @@ void PGS::Gui::NodeEditorRenderer::renderNodes(const UIContext& context, const N
             const float textWidth = ImGui::CalcTextSize(outputPort.name.c_str()).x;
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + NODE_SIZE_X - textWidth);
 
-            ImGui::Text(outputPort.name.c_str());
+            ImGui::TextUnformatted(outputPort.name.c_str());
 
             ImNodes::EndOutputAttribute();
         }
@@ -108,7 +108,7 @@ void PGS::Gui::NodeEditorRenderer::renderNodes(const UIContext& context, const N
             }
             else
             {
-                ImGui::Text(inputPort.name.c_str());
+                ImGui::TextUnformatted(inputPort.name.c_str());
             }
             ImNodes::EndInputAttribute();
         }
